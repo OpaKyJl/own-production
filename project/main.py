@@ -5,7 +5,7 @@ import time
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from vcr_gui_v001 import Ui_MainWindow
+from vcr_gui_v005 import Ui_MainWindow
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
@@ -30,6 +30,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pBtn_an_sales.setStyleSheet(pBtn_style_sheet)
         self.pBtn_recipe.setStyleSheet(pBtn_style_sheet)
         self.pBtn_products.setStyleSheet(pBtn_style_sheet)
+        self.pBtn_an_sales_product.setStyleSheet(pBtn_style_sheet)
+        self.pBtn_an_sales_production.setStyleSheet(pBtn_style_sheet)
 
 
 
@@ -42,11 +44,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pBtn_recipe.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(4))
         self.pBtn_products.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(5))
 
-        self.pBtn_back_to_main.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.pBtn_back_to_main_9.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.pBtn_back_to_main_2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.pBtn_back_to_main_3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.pBtn_back_to_main_4.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.pBtn_back_to_main_5.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+
+        self.pBtn_an_sales_product.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(2))
+        self.pBtn_an_sales_production.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(1))
+
+        self.pBtn_back_to_main_6.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(0))
+        self.pBtn_back_to_main_7.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(0))
 
         # self.view_graphic.clicked.connect(lambda: self.plot())
         # self.view_graphic.clicked.connect(self.prepare_canvas_and_toolbar)
