@@ -5,7 +5,7 @@ import time
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from vcr_gui_v005 import Ui_MainWindow
+from vcr_gui_v007 import Ui_MainWindow
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
