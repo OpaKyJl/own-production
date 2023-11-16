@@ -5,7 +5,7 @@ import time
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication
-from vcr_gui_v008 import Ui_MainWindow
+from vcr_gui_v009 import Ui_MainWindow
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
@@ -80,7 +80,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addWidget(self.comboBox)
         # verticalScrollBar()->setValue(ui.textEdit->verticalScrollBar()->maximum());
         # не получается
-        # self.scrollArea_2.verticalScrollBar().setValue(self.scrollArea_2.verticalScrollBar().maximum())
+        # self.scrollArea_2.verticalScrollBar().setValue(self.scrollArea_2.maximum())
 
 
     def date_select(self):

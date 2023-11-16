@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v008.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v009.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -263,7 +263,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_7 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 677, 651))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 664, 118))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_7)
         self.gridLayout.setObjectName("gridLayout")
@@ -1179,7 +1179,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
