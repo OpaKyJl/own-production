@@ -15,10 +15,11 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(1364, 766)
-        MainWindow.setMinimumSize(QtCore.QSize(960, 590))
+        # MainWindow.resize(1364, 766)
+        # MainWindow.setMinimumSize(QtCore.QSize(960, 590))
         MainWindow.setStyleSheet("gridline-color: rgb(177, 255, 170);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
+        # MainWindow.showMaximized()
         self.centralwidget.setStyleSheet("background-color: rgb(177, 255, 170);")
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_29 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -195,6 +196,7 @@ class Ui_MainWindow(object):
         self.pBtn_back_to_main_9.setObjectName("pBtn_back_to_main_9")
         self.verticalLayout.addWidget(self.pBtn_back_to_main_9)
         self.stackedWidget.addWidget(self.page_production_acc)
+
         self.page_production_sales_acc = QtWidgets.QWidget()
         self.page_production_sales_acc.setObjectName("page_production_sales_acc")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_production_sales_acc)
@@ -204,6 +206,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_28.setSpacing(10)
         self.verticalLayout_28.setObjectName("verticalLayout_28")
         self.label_24 = QtWidgets.QLabel(self.page_production_sales_acc)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

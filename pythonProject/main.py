@@ -19,9 +19,13 @@ warnings.filterwarnings("ignore")
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, *args, **kwargs):
         QMainWindow.__init__(self)
+        self.reload()
+
+    def reload(self):
         self.setupUi(self)
 
         self.setWindowIcon(QtGui.QIcon("img\moon.png"))
+        self.showMaximized()
 
         pBtn_style_sheet = "background-color: rgb(177, 255, 170);\n border-radius: 40px;\n color: rgb(43, 89, 250);\n border: 1px solid rgb(43, 89, 250);}\n QPushButton:hover{    \n background-color: #9CDF96;}"
 
@@ -99,16 +103,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def btn_back(self):
         self.pBtn_back_to_main_9.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.pBtn_back_to_main_9.clicked.connect(lambda: self.reload())
+
         self.pBtn_back_to_main_2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        # сдесь установление стандартных параметров страницы
+        self.pBtn_back_to_main_2.clicked.connect(lambda: self.reload())
+
         self.pBtn_back_to_main_3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.pBtn_back_to_main_3.clicked.connect(lambda: self.reload())
+
         self.pBtn_back_to_main_4.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.pBtn_back_to_main_4.clicked.connect(lambda: self.reload())
+
         self.pBtn_back_to_main_5.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.pBtn_back_to_main_5.clicked.connect(lambda: self.reload())
 
         self.pBtn_an_sales_product.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(2))
         self.pBtn_an_sales_production.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(1))
 
-        self.pBtn_back_to_main_6.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(0))
-        self.pBtn_back_to_main_7.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(0))
+        #################################################################################################
+        # тут нужно вернуться на выбор анализа
+
+        self.pBtn_back_to_main_6.clicked.connect(lambda: self.reload())
+        self.pBtn_back_to_main_6.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
+
+        self.pBtn_back_to_main_7.clicked.connect(lambda: self.reload())
+        self.pBtn_back_to_main_7.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
+
+        #################################################################################################
 
 def main():
     app = QApplication(sys.argv)
