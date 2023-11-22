@@ -46,7 +46,7 @@ def select_from_table(connection, db_name):
             cursor.execute(
                 f'SELECT * FROM {db_name};'
             )
-            print(cursor.fetchall())
+            # print(cursor.fetchall())
             selected_data = cursor.fetchall()
 
             match db_name:
@@ -57,35 +57,39 @@ def select_from_table(connection, db_name):
                         print("price (100 gr)  = ", row[2], "\n")
 
                 case "products_accounting":
-                    for row in selected_data:
-                        print("Id = ", row[0], )
-                        print("production = ", row[1])
-                        print("product = ", row[2])
-                        print("date = ", row[3])
-                        print("product_used = ", row[4])
-                        print("cost (использованного продукта)  = ", row[5], "\n")
+                    # for row in selected_data:
+                    #     print("Id = ", row[0], )
+                    #     print("production = ", row[1])
+                    #     print("product = ", row[2])
+                    #     print("date = ", row[3])
+                    #     print("product_used = ", row[4])
+                    #     print("cost (использованного продукта)  = ", row[5], "\n")
+                    return selected_data
 
                 case "recipe":
-                    for row in selected_data:
-                        print("Id = ", row[0], )
-                        print("production = ", row[1])
-                        print("product = ", row[2])
-                        print("gram = ", row[3])
-                        print("cost (аторасчёт)  = ", row[4], "\n")
+                    # for row in selected_data:
+                    #     print("Id = ", row[0], )
+                    #     print("production = ", row[1])
+                    #     print("product = ", row[2])
+                    #     print("gram = ", row[3])
+                    #     print("cost (аторасчёт)  = ", row[4], "\n")
+                    return selected_data
 
                 case "recipe_cost":
-                    for row in selected_data:
-                        print("Id = ", row[0], )
-                        print("product = ", row[1])
-                        print("cost (100 gr)  = ", row[2], "\n")
+                    # for row in selected_data:
+                    #     print("Id = ", row[0], )
+                    #     print("product = ", row[1])
+                    #     print("cost (100 gr)  = ", row[2], "\n")
+                    return selected_data
 
                 case "sales_accounting":
-                    for row in selected_data:
-                        print("Id = ", row[0], )
-                        print("production = ", row[1])
-                        print("date = ", row[2])
-                        print("продано в граммах = ", row[3])
-                        print("стоимость проданного  = ", row[4], "\n")
+                    # for row in selected_data:
+                    #     print("Id = ", row[0], )
+                    #     print("production = ", row[1])
+                    #     print("date = ", row[2])
+                    #     print("продано в граммах = ", row[3])
+                    #     print("стоимость проданного  = ", row[4], "\n")
+                    return selected_data
 
     except Exception as ex:
         print(f'[INFO] Ошибка получения из таблицы {db_name}:', ex)
@@ -181,25 +185,25 @@ def delete_row(connection, db_name):
     except Exception as ex:
         print(f'[INFO] Ошибка удаления строки из таблицы{db_name}:', ex)
 
-db_products = "products"
-db_products_accounting = "products_accounting"
-db_recipe = "recipe"
-db_recipe_cost = "recipe_cost"
-db_sales_accounting = "sales_accounting"
-
-
-connection = None
-connection = set_connection(connection)
-connection.autocommit = True
-check_connection(connection)
-
-# select_from_table(connection, db_products_accounting)
-insert_into_table(connection, db_sales_accounting)
-# update_row(connection, db_products)
-# delete_row(connection, db_products)
-
-close_connection(connection)
-check_connection(connection)
+# db_products = "products"
+# db_products_accounting = "products_accounting"
+# db_recipe = "recipe"
+# db_recipe_cost = "recipe_cost"
+# db_sales_accounting = "sales_accounting"
+#
+#
+# connection = None
+# connection = set_connection(connection)
+# connection.autocommit = True
+# check_connection(connection)
+#
+# # select_from_table(connection, db_products_accounting)
+# insert_into_table(connection, db_sales_accounting)
+# # update_row(connection, db_products)
+# # delete_row(connection, db_products)
+#
+# close_connection(connection)
+# check_connection(connection)
 
 
 # a = {

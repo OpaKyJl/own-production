@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v010.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v012.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -19,7 +19,6 @@ class Ui_MainWindow(object):
         # MainWindow.setMinimumSize(QtCore.QSize(960, 590))
         MainWindow.setStyleSheet("gridline-color: rgb(177, 255, 170);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
-        # MainWindow.showMaximized()
         self.centralwidget.setStyleSheet("background-color: rgb(177, 255, 170);")
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_29 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -196,7 +195,6 @@ class Ui_MainWindow(object):
         self.pBtn_back_to_main_9.setObjectName("pBtn_back_to_main_9")
         self.verticalLayout.addWidget(self.pBtn_back_to_main_9)
         self.stackedWidget.addWidget(self.page_production_acc)
-
         self.page_production_sales_acc = QtWidgets.QWidget()
         self.page_production_sales_acc.setObjectName("page_production_sales_acc")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.page_production_sales_acc)
@@ -206,7 +204,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_28.setSpacing(10)
         self.verticalLayout_28.setObjectName("verticalLayout_28")
         self.label_24 = QtWidgets.QLabel(self.page_production_sales_acc)
-
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1018,8 +1015,8 @@ class Ui_MainWindow(object):
         self.widget_4 = QtWidgets.QWidget(self.page_products)
         self.widget_4.setStyleSheet("background-color: rgb(255, 233, 190);")
         self.widget_4.setObjectName("widget_4")
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.widget_4)
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget_4)
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.label_9 = QtWidgets.QLabel(self.widget_4)
@@ -1049,13 +1046,18 @@ class Ui_MainWindow(object):
         self.label_10.setStyleSheet("color: rgb(43, 89, 250);")
         self.label_10.setObjectName("label_10")
         self.verticalLayout_13.addWidget(self.label_10)
-        self.comboBox_4 = QtWidgets.QComboBox(self.widget_4)
-        self.comboBox_4.setMinimumSize(QtCore.QSize(0, 30))
-        self.comboBox_4.setMaximumSize(QtCore.QSize(600, 16777215))
-        self.comboBox_4.setStyleSheet("color: rgb(43, 89, 250);\n"
+        self.spinBox_3 = QtWidgets.QSpinBox(self.widget_4)
+        self.spinBox_3.setMinimumSize(QtCore.QSize(300, 30))
+        self.spinBox_3.setMaximumSize(QtCore.QSize(600, 16777215))
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(15)
+        self.spinBox_3.setFont(font)
+        self.spinBox_3.setStyleSheet("color: rgb(43, 89, 250);\n"
 "background-color: rgb(255, 255, 255);")
-        self.comboBox_4.setObjectName("comboBox_4")
-        self.verticalLayout_13.addWidget(self.comboBox_4)
+        self.spinBox_3.setMaximum(999999)
+        self.spinBox_3.setObjectName("spinBox_3")
+        self.verticalLayout_13.addWidget(self.spinBox_3)
         self.verticalLayout_14 = QtWidgets.QVBoxLayout()
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.pushButton_5 = QtWidgets.QPushButton(self.widget_4)
@@ -1129,9 +1131,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.addWidget(self.pushButton_6)
         self.verticalLayout_13.addLayout(self.verticalLayout_14)
         self.verticalLayout_4.addLayout(self.verticalLayout_13)
-        self.horizontalLayout_5.addLayout(self.verticalLayout_4)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.horizontalLayout.addLayout(self.verticalLayout_4)
         self.textEdit = QtWidgets.QTextEdit(self.widget_4)
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -1142,7 +1142,6 @@ class Ui_MainWindow(object):
         self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         self.horizontalLayout.addWidget(self.textEdit)
-        self.horizontalLayout_5.addLayout(self.horizontalLayout)
         self.gridLayout_13.addWidget(self.widget_4, 0, 0, 1, 1)
         self.verticalLayout_34.addLayout(self.gridLayout_13)
         self.verticalLayout_35.addLayout(self.verticalLayout_34)
