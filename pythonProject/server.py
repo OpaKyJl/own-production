@@ -51,10 +51,11 @@ def select_from_table(connection, db_name):
 
             match db_name:
                 case "products":
-                    for row in selected_data:
-                        print("Id = ", row[0], )
-                        print("product = ", row[1])
-                        print("price (100 gr)  = ", row[2], "\n")
+                    # for row in selected_data:
+                    #     print("Id = ", row[0], )
+                    #     print("product = ", row[1])
+                    #     print("price (100 gr)  = ", row[2], "\n")
+                    return selected_data
 
                 case "products_accounting":
                     # for row in selected_data:

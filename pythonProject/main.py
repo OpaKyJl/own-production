@@ -3,6 +3,7 @@ import datetime
 import sys
 import time
 from collections import defaultdict
+from math import ceil
 
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
@@ -55,9 +56,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_8.clicked.connect(self.add_spinbox)
         # добавляем запись в таблицу справа
         # self.pushButton_8.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost))
-        self.pushButton_10.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost))
+        self.pushButton_10.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost, self.stackedWidget.currentIndex()))
 
         self.pushButton_9.clicked.connect(lambda: self.add_combox(self.verticalLayout_19, db_sales_accounting))
+
+        self.pushButton_5.clicked.connect(lambda: self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex()))
 
 
     def add_spinbox(self):
@@ -150,28 +153,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("Учёт продаж собственной продукции")
                 self.add_combox(self.verticalLayout_6, db_products_accounting)
                 self.add_spinbox()
-
-                # recept = srv.select_from_table(connection, db_recipe_cost)
-                # print(recept)
-                # self.tableWidget.clearContents()
-                #
-                # self.tableWidget.setRowCount(len(recept))
-                #
-                # # # составляем отдельный список id
-                # # for row in recept:
-                # #     select_production.append(row[1])
-                #
-                # rows = len(self.verticalLayout_6)
-                # # rows = self.tableWidget.rowCount()
-                # # cols = self.tableWidget.columnCount()
-                #
-                # for row in range(rows):
-                #     self.tableWidget.setItem(row, 0, QTableWidgetItem("Тут продукция"))
-                #     self.tableWidget.setItem(row, 1, QTableWidgetItem("Тут граммы"))
-                #     self.tableWidget.setItem(row, 2, QTableWidgetItem("Тут цена"))
-                # self.tableWidget.cellWidget(row, 1)
-                # self.tableWidget.insertRow()
-                # self.fill_combox(db_products_accounting, self.comboBox_6)
+                self.add_tablerow(self.tableWidget, db_recipe_cost, self.stackedWidget.currentIndex())
 
             case 3:
                 print("Анализ продаж")
@@ -191,40 +173,106 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case 5:
                 print("Учёт продуктов на изготовление собственной продукции")
                 self.fill_combox(db_recipe, self.comboBox_3)
+                self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex())
 
-    def add_tablerow(self, table, db_name):
-        recipe = srv.select_from_table(connection, db_name)
-        recipe_cost_list = defaultdict(list)
-        for row in recipe:
-            recipe_cost_list[row[1]].append(row[2])
+    def add_tablerow(self, table, db_name, page):
+        match page:
+            case 2:
+                recipe = srv.select_from_table(connection, db_name)
+                recipe_cost_list = defaultdict(list)
 
-        print(recipe_cost_list)
-        # print(recept)
-        table.clearContents()
+                for row in recipe:
+                    recipe_cost_list[row[1]].append(float(row[2]))
 
-        table.setRowCount(len(self.verticalLayout_6))
+                table.clearContents()
+                table.setRowCount(len(self.verticalLayout_6))
+                rows = len(self.verticalLayout_6)
 
-        rows = len(self.verticalLayout_6)
+                #########################################################################
+                # РАБОТАЕТ !!!!!!!!!!!!!!!!!!!!!!!!!!
+                # print(self.verticalLayout_6.itemAt(0).widget().currentText())
+                #########################################################################
+                sum = 0
 
-        # index = self.verticalLayout_6.count()
+                for row in range(rows):
+                    name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
+                    gram = self.verticalLayout_11.itemAt(row).widget().value()
+                    table.setItem(row, 0, QTableWidgetItem(name_production))
+                    table.setItem(row, 1, QTableWidgetItem(str(gram)))
+                    if name_production in recipe_cost_list:
+                        cost = recipe_cost_list[name_production]
+                        # table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
+                        table.setItem(row, 2, QTableWidgetItem(str(gram * cost[0])))
+                        sum = sum + (gram * cost[0])
 
-        #########################################################################
-        # РАБОТАЕТ !!!!!!!!!!!!!!!!!!!!!!!!!!
-        # print(self.verticalLayout_6.itemAt(0).widget().currentText())
-        #########################################################################
+                self.label_14.setText("СУММА: " + str(sum))
+            case 5:
+                recipe = srv.select_from_table(connection, db_name)
+                recipe_list = defaultdict(list)
 
-        # print(self.comboBox.objectName() + "это в add_row")
-        # print(self.verticalLayout_11.itemAt(0).widget().value())
+                for row in recipe:
+                    recipe_list[row[1]].append([row[2], float(row[3])])
+                    # recipe_list[row[1]].append(float(row[3]))
+                # print(recipe_list)
 
-        for row in range(rows):
-            name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
-            gram = self.verticalLayout_11.itemAt(row).widget().value()
-            table.setItem(row, 0, QTableWidgetItem(name_production))
-            table.setItem(row, 1, QTableWidgetItem(str(gram)))
-            if name_production in recipe_cost_list:
-                table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
-                print(gram * (recipe_cost_list[name_production]))
-                # table.setItem(row, 2, QTableWidgetItem(str(gram * float(recipe_cost_list[name_production]))))
+                table.clearContents()
+
+                # print(name_production)
+
+                ####################################################################################
+                # получаем всю информацию из таблицы рецепты
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                select_production = defaultdict(list)
+
+                # составляем отдельный список id
+                for row in select_data_from_table:
+                    select_production[row[0]].append(row[1])
+
+                # print(select_production)
+
+                name = self.comboBox_3.currentText()
+                # print(recipe_list.keys())
+                # ищем имена по индексам
+                product = srv.select_from_table(connection, db_products)
+                product_list = defaultdict(list)
+                print(product)
+
+                for row in product:
+                    product_list[row[0]].append([row[1], float(row[2])])
+
+                text_of_recipe = "Тут рецепт на 100 грамм продукции"
+
+                # 100 грамм - одна порция
+                for id in recipe_list.keys():
+                    if name == select_production[id][0]:
+                        # print("мы тут")
+                        text_of_recipe = f'{text_of_recipe}\n ------<{name}>------'
+                        table.setRowCount(len(recipe_list[id]))
+                        for row in range(len(recipe_list[id])):
+                            product_name = str(product_list[recipe_list[id][row][0]][0][0])
+                            table.setItem(row, 0, QTableWidgetItem(product_name))
+                            text_of_recipe = f'{text_of_recipe} \n {product_name} - '
+                            gram_of_product = recipe_list[id][row][1]
+                            value = (gram_of_product * self.spinBox_3.value()) / 100
+                            text_of_recipe = f'{text_of_recipe}{ceil(recipe_list[id][row][1])} гр.\n'
+                            table.setItem(row, 1, QTableWidgetItem(str(ceil(value))) )
+                self.textEdit.setText(text_of_recipe)
+
+
+                ####################################################################################
+
+                # table.setRowCount(len(self.verticalLayout_6))
+                # rows = len(self.verticalLayout_6)
+                #
+                # for row in range(rows):
+                #     name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
+                #     gram = self.verticalLayout_11.itemAt(row).widget().value()
+                #     table.setItem(row, 0, QTableWidgetItem(name_production))
+                #     table.setItem(row, 1, QTableWidgetItem(str(gram)))
+                #     if name_production in recipe_cost_list:
+                #         cost = recipe_cost_list[name_production]
+                #         # table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
+                #         table.setItem(row, 2, QTableWidgetItem(str(gram * cost[0])))
 
     def fill_combox(self, db_name, combox):
         # print("тут fill_combox")
