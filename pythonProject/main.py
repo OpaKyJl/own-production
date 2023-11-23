@@ -8,7 +8,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v014 import Ui_MainWindow
+from vcr_gui_v015 import Ui_MainWindow
 import server as srv
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
@@ -61,6 +61,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_9.clicked.connect(lambda: self.add_combox(self.verticalLayout_19, db_sales_accounting))
 
         self.pushButton_5.clicked.connect(lambda: self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex()))
+
+        # self.comboBox_2.currentIndexChanged.connect(lambda: self.add_checkbox("Текст"))
+        self.comboBox_2.currentIndexChanged.connect(lambda: self.load_info("3-2"))
 
 
     def add_spinbox(self):
@@ -118,6 +121,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # не получается
         # self.scrollArea_2.verticalScrollBar().setValue(self.scrollArea_2.maximum())
 
+    def add_checkbox(self, text):
+        # print("click")
+
+        layout = self.verticalLayout_43
+        self.checkBox = QtWidgets.QCheckBox()
+
+        checkbox = self.checkBox
+
+        checkbox.setMinimumSize(QtCore.QSize(300, 0))
+        checkbox.setMaximumSize(QtCore.QSize(300, 16777215))
+        checkbox.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                      "color: rgb(43, 89, 250);")
+
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(15)
+
+        checkbox.setFont(font)
+
+        checkbox.setObjectName(f'{layout.objectName()}_{len(layout)}')
+        checkbox.setText(text)
+
+        layout.addWidget(checkbox)
+        # print(combox.objectName())
+        # print(combox.currentText())
+
+        # checkbox.addItem("first")
+
     def date_select(self):
         self.textEdit_4.setText(self.calendarWidget_5.selectedDate().toString('dd-MM-yyyy'))
         self.textEdit_5.setText(self.calendarWidget_6.selectedDate().toString('dd-MM-yyyy'))
@@ -162,10 +193,78 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("Анализ продаж продукции")
                 self.add_combox(self.verticalLayout_19, db_sales_accounting)
                 # self.fill_combox(db_sales_accounting, self.comboBox)
+                production_acc = srv.select_from_table(connection, db_products_accounting)
+                production_acc_list = defaultdict(list)
+                # production_acc_list_list = defaultdict(list)
+
+                for row in production_acc:
+                    production_acc_list[row[1]].append([row[2], row[3],float(row[4]), float(row[5])])
+
+                products_from_table = srv.select_from_table(connection, db_products)
+                product_list = defaultdict(list)
+
+                for row in products_from_table:
+                    product_list[row[0]].append([row[1], float(row[2])])
+
+                print(production_acc_list)
+                print(product_list)
+
+
+
+                # product_lis = defaultdict(list)
+                # for row in
+
+                # for id in production_acc_list:
+
+
+                # table.clearContents()
+                # table.setRowCount(len(self.verticalLayout_6))
+                # rows = len(self.verticalLayout_6)
 
             case "3-2":
                 print("Анализ продаж продуктов")
                 self.fill_combox(db_products_accounting, self.comboBox_2)
+                # self.comboBox_2.addItem("first")
+                # self.fill_combox(db_sales_accounting, self.comboBox)
+                production_acc = srv.select_from_table(connection, db_products_accounting)
+                production_acc_list = defaultdict(list)
+                product_id_list = defaultdict(list)
+
+                for row in production_acc:
+                    production_acc_list[row[1]].append([row[2], row[3], float(row[4]), float(row[5])])
+                    product_id_list[row[1]].append(row[2])
+
+                products_from_table = srv.select_from_table(connection, db_products)
+                product_list = defaultdict(list)
+
+                for row in products_from_table:
+                    product_list[row[0]].append([row[1], float(row[2])])
+
+                recipe = srv.select_from_table(connection, db_recipe_cost)
+                recipe_list = defaultdict(list)
+
+                for row in recipe:
+                    recipe_list[row[0]].append(row[1])
+
+                # print(self.comboBox_2.currentText())
+                # print(recipe_list[1][0])
+                for id in product_id_list:
+                    product_id_list[id] = set(product_id_list[id])
+                # print(product_id_list)
+                for index in product_id_list: # 1 2
+                    for id in product_id_list[index]:
+                        # print(id)
+                        if self.comboBox_2.currentText() == recipe_list[index][0]:
+                            # print(product_list[id][0][0])
+                            # print(product_list[recipe_list[index]])
+                            self.add_checkbox(product_list[id][0][0])
+                            # print(recipe_list[index][0])
+                            # print("Работает")
+
+                print(production_acc_list)
+                print(product_list)
+                print(product_id_list)
+                print(recipe_list)
 
             case 4:
                 print("4")
