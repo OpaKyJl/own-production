@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
+import datetime
 import sys
 import time
+from collections import defaultdict
 
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
-from PyQt5.QtWidgets import QMainWindow, QApplication
-from vcr_gui_v013 import Ui_MainWindow
+from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
+from vcr_gui_v014 import Ui_MainWindow
 import server as srv
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
@@ -51,7 +53,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.pushButton_8.clicked.connect(lambda: self.add_combox(self.verticalLayout_6, db_products_accounting))
         self.pushButton_8.clicked.connect(self.add_spinbox)
+        # добавляем запись в таблицу справа
+        # self.pushButton_8.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost))
+        self.pushButton_10.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost))
+
         self.pushButton_9.clicked.connect(lambda: self.add_combox(self.verticalLayout_19, db_sales_accounting))
+
 
     def add_spinbox(self):
         self.spinBox = QtWidgets.QSpinBox()
@@ -68,7 +75,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.spinBox.setFont(font)
 
+        self.spinBox.setObjectName(f'{self.verticalLayout_11.objectName()}_{len(self.verticalLayout_11)}')
+
         self.verticalLayout_11.addWidget(self.spinBox)
+
+        # print(self.spinBox.value())
+        # print(self.spinBox.objectName())
 
     def add_combox(self, layout, db_name):
         # print("click")
@@ -89,9 +101,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.fill_combox(db_name, combox)
 
+        # устанавливаем имя добавляемого комбобокса как  "имя лэйаута" + "порядковый номер(начиная с 0)"
+        combox.setObjectName(f'{layout.objectName()}_{len(layout)}')
+
         layout.addWidget(combox)
-        # combox.addItem("first")
-        print(combox.currentText())
+        # print(combox.objectName())
+        # print(combox.currentText())
+
+        combox.addItem("first")
+        # print(combox.currentText())
 
         # verticalScrollBar()->setValue(ui.textEdit->verticalScrollBar()->maximum());
         # не получается
@@ -132,6 +150,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("Учёт продаж собственной продукции")
                 self.add_combox(self.verticalLayout_6, db_products_accounting)
                 self.add_spinbox()
+
+                # recept = srv.select_from_table(connection, db_recipe_cost)
+                # print(recept)
+                # self.tableWidget.clearContents()
+                #
+                # self.tableWidget.setRowCount(len(recept))
+                #
+                # # # составляем отдельный список id
+                # # for row in recept:
+                # #     select_production.append(row[1])
+                #
+                # rows = len(self.verticalLayout_6)
+                # # rows = self.tableWidget.rowCount()
+                # # cols = self.tableWidget.columnCount()
+                #
+                # for row in range(rows):
+                #     self.tableWidget.setItem(row, 0, QTableWidgetItem("Тут продукция"))
+                #     self.tableWidget.setItem(row, 1, QTableWidgetItem("Тут граммы"))
+                #     self.tableWidget.setItem(row, 2, QTableWidgetItem("Тут цена"))
+                # self.tableWidget.cellWidget(row, 1)
+                # self.tableWidget.insertRow()
                 # self.fill_combox(db_products_accounting, self.comboBox_6)
 
             case 3:
@@ -152,6 +191,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case 5:
                 print("Учёт продуктов на изготовление собственной продукции")
                 self.fill_combox(db_recipe, self.comboBox_3)
+
+    def add_tablerow(self, table, db_name):
+        recipe = srv.select_from_table(connection, db_name)
+        recipe_cost_list = defaultdict(list)
+        for row in recipe:
+            recipe_cost_list[row[1]].append(row[2])
+
+        print(recipe_cost_list)
+        # print(recept)
+        table.clearContents()
+
+        table.setRowCount(len(self.verticalLayout_6))
+
+        rows = len(self.verticalLayout_6)
+
+        # index = self.verticalLayout_6.count()
+
+        #########################################################################
+        # РАБОТАЕТ !!!!!!!!!!!!!!!!!!!!!!!!!!
+        # print(self.verticalLayout_6.itemAt(0).widget().currentText())
+        #########################################################################
+
+        # print(self.comboBox.objectName() + "это в add_row")
+        # print(self.verticalLayout_11.itemAt(0).widget().value())
+
+        for row in range(rows):
+            name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
+            gram = self.verticalLayout_11.itemAt(row).widget().value()
+            table.setItem(row, 0, QTableWidgetItem(name_production))
+            table.setItem(row, 1, QTableWidgetItem(str(gram)))
+            if name_production in recipe_cost_list:
+                table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
+                print(gram * (recipe_cost_list[name_production]))
+                # table.setItem(row, 2, QTableWidgetItem(str(gram * float(recipe_cost_list[name_production]))))
 
     def fill_combox(self, db_name, combox):
         # print("тут fill_combox")

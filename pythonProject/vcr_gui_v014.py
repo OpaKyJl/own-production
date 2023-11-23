@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v012.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v014.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -274,26 +274,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
         self.verticalLayout_6.setSpacing(15)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.comboBox_6 = QtWidgets.QComboBox(self.scrollAreaWidgetContents_7)
-        self.comboBox_6.setMinimumSize(QtCore.QSize(300, 0))
-        self.comboBox_6.setMaximumSize(QtCore.QSize(300, 16777215))
-        self.comboBox_6.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"color: rgb(43, 89, 250);")
-        self.comboBox_6.setObjectName("comboBox_6")
-        self.verticalLayout_6.addWidget(self.comboBox_6)
         self.horizontalLayout_7.addLayout(self.verticalLayout_6)
         self.verticalLayout_11 = QtWidgets.QVBoxLayout()
         self.verticalLayout_11.setContentsMargins(30, -1, -1, -1)
         self.verticalLayout_11.setSpacing(15)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
-        self.spinBox_2 = QtWidgets.QSpinBox(self.scrollAreaWidgetContents_7)
-        self.spinBox_2.setMinimumSize(QtCore.QSize(300, 0))
-        self.spinBox_2.setMaximumSize(QtCore.QSize(300, 16777215))
-        self.spinBox_2.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"color: rgb(43, 89, 250);")
-        self.spinBox_2.setMaximum(999999)
-        self.spinBox_2.setObjectName("spinBox_2")
-        self.verticalLayout_11.addWidget(self.spinBox_2)
         self.horizontalLayout_7.addLayout(self.verticalLayout_11)
         self.gridLayout.addLayout(self.horizontalLayout_7, 0, 0, 1, 1)
         self.pushButton_8 = QtWidgets.QPushButton(self.scrollAreaWidgetContents_7)
@@ -325,6 +310,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addLayout(self.verticalLayout_26)
         self.verticalLayout_17 = QtWidgets.QVBoxLayout()
         self.verticalLayout_17.setObjectName("verticalLayout_17")
+        self.pushButton_10 = QtWidgets.QPushButton(self.widget_5)
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(15)
+        self.pushButton_10.setFont(font)
+        self.pushButton_10.setStyleSheet("color: rgb(43, 89, 250);\n"
+"background-color: rgb(177, 255, 170);")
+        self.pushButton_10.setObjectName("pushButton_10")
+        self.verticalLayout_17.addWidget(self.pushButton_10)
         self.label_13 = QtWidgets.QLabel(self.widget_5)
         self.label_13.setMinimumSize(QtCore.QSize(50, 0))
         font = QtGui.QFont()
@@ -546,13 +540,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_19 = QtWidgets.QVBoxLayout()
         self.verticalLayout_19.setSpacing(15)
         self.verticalLayout_19.setObjectName("verticalLayout_19")
-        self.comboBox = QtWidgets.QComboBox(self.scrollAreaWidgetContents_6)
-        self.comboBox.setMinimumSize(QtCore.QSize(300, 0))
-        self.comboBox.setMaximumSize(QtCore.QSize(300, 16777215))
-        self.comboBox.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"color: rgb(43, 89, 250);")
-        self.comboBox.setObjectName("comboBox")
-        self.verticalLayout_19.addWidget(self.comboBox, 0, QtCore.Qt.AlignLeft)
         self.verticalLayout_20.addLayout(self.verticalLayout_19)
         self.pushButton_9 = QtWidgets.QPushButton(self.scrollAreaWidgetContents_6)
         self.pushButton_9.setMinimumSize(QtCore.QSize(60, 30))
@@ -1190,6 +1177,7 @@ class Ui_MainWindow(object):
 " продукции (в граммах):"))
         self.pushButton_8.setText(_translate("MainWindow", "+"))
         self.pushButton_7.setText(_translate("MainWindow", "ПРОДАТЬ"))
+        self.pushButton_10.setText(_translate("MainWindow", "Обновить данные"))
         self.label_13.setText(_translate("MainWindow", "ИТОГ"))
         item = self.tableWidget.verticalHeaderItem(0)
         item.setText(_translate("MainWindow", "1"))
