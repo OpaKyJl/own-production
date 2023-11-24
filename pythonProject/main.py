@@ -46,6 +46,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_back()
         self.date_select()
 
+    def closeEvent(self, event):
+        # закрытие соединения с БД
+        srv.close_connection(connection)
+        srv.check_connection(connection)
+
     def add_functions(self):
         self.calendarWidget_5.clicked.connect(self.date_select)
         self.calendarWidget_6.clicked.connect(self.date_select)
@@ -55,18 +60,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_8.clicked.connect(lambda: self.add_combox(self.verticalLayout_6, db_products_accounting))
         self.pushButton_8.clicked.connect(self.add_spinbox)
         # добавляем запись в таблицу справа
-        # self.pushButton_8.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost))
         self.pushButton_10.clicked.connect(lambda: self.add_tablerow(self.tableWidget, db_recipe_cost, self.stackedWidget.currentIndex()))
 
         self.pushButton_9.clicked.connect(lambda: self.add_combox(self.verticalLayout_19, db_sales_accounting))
 
         self.pushButton_5.clicked.connect(lambda: self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex()))
 
-        # self.comboBox_2.currentIndexChanged.connect(lambda: self.add_checkbox("Текст"))
-        # self.comboBox_2.currentIndexChanged.connect(lambda: self.comboBox_2.clear())
         self.comboBox_2.currentIndexChanged.connect(lambda: self.load_info("3-2"))
-        # self.pushButton_11.clicked.connect(lambda: self.load_info("3-2"))
 
+        self.pushButton_6.clicked.connect(lambda: self.insert_data_to_table(db_products_accounting))
+        self.pushButton_7.clicked.connect(lambda: self.insert_data_to_table(db_sales_accounting))
 
     def add_spinbox(self):
         self.spinBox = QtWidgets.QSpinBox()
@@ -82,16 +85,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         font.setPointSize(15)
 
         self.spinBox.setFont(font)
-
         self.spinBox.setObjectName(f'{self.verticalLayout_11.objectName()}_{len(self.verticalLayout_11)}')
-
         self.verticalLayout_11.addWidget(self.spinBox)
 
-        # print(self.spinBox.value())
-        # print(self.spinBox.objectName())
 
     def add_combox(self, layout, db_name):
-        # print("click")
         self.comboBox = QtWidgets.QComboBox()
 
         combox = self.comboBox
@@ -108,27 +106,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         combox.setFont(font)
 
         self.fill_combox(db_name, combox)
-
         # устанавливаем имя добавляемого комбобокса как  "имя лэйаута" + "порядковый номер(начиная с 0)"
         combox.setObjectName(f'{layout.objectName()}_{len(layout)}')
-
         layout.addWidget(combox)
-        # print(combox.objectName())
-        # print(combox.currentText())
 
-        combox.addItem("first")
-        # print(combox.currentText())
-
-        # verticalScrollBar()->setValue(ui.textEdit->verticalScrollBar()->maximum());
-        # не получается
-        # self.scrollArea_2.verticalScrollBar().setValue(self.scrollArea_2.maximum())
 
     def add_checkbox(self, text):
         # print("click")
 
         layout = self.verticalLayout_43
         self.checkBox = QtWidgets.QCheckBox()
-
         checkbox = self.checkBox
 
         checkbox.setMinimumSize(QtCore.QSize(300, 0))
@@ -144,12 +131,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         checkbox.setObjectName(f'{layout.objectName()}_{len(layout)}')
         checkbox.setText(text)
-
         layout.addWidget(checkbox)
-        # print(combox.objectName())
-        # print(combox.currentText())
 
-        # checkbox.addItem("first")
 
     def date_select(self):
         self.textEdit_4.setText(self.calendarWidget_5.selectedDate().toString('dd-MM-yyyy'))
@@ -199,10 +182,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case "3-1":
                 print("Анализ продаж продукции")
                 self.add_combox(self.verticalLayout_19, db_sales_accounting)
-                # self.fill_combox(db_sales_accounting, self.comboBox)
                 production_acc = srv.select_from_table(connection, db_products_accounting)
                 production_acc_list = defaultdict(list)
-                # production_acc_list_list = defaultdict(list)
 
                 for row in production_acc:
                     production_acc_list[row[1]].append([row[2], row[3],float(row[4]), float(row[5])])
@@ -213,17 +194,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for row in products_from_table:
                     product_list[row[0]].append([row[1], float(row[2])])
 
-                print(production_acc_list)
-                print(product_list)
-
             case "3-2":
                 print("Анализ продаж продуктов")
                 self.clear_layout(self.verticalLayout_43)
 
-                # self.comboBox_2.clear()
-                # self.fill_combox(db_products_accounting, self.comboBox_2)
-                # self.comboBox_2.addItem("first")
-                # self.fill_combox(db_sales_accounting, self.comboBox)
                 production_acc = srv.select_from_table(connection, db_products_accounting)
                 production_acc_list = defaultdict(list)
                 product_id_list = defaultdict(list)
@@ -244,21 +218,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for row in recipe:
                     recipe_list[row[0]].append(row[1])
 
-                # print(self.comboBox_2.currentText())
-                # print(recipe_list[1][0])
                 for id in product_id_list:
                     product_id_list[id] = set(product_id_list[id])
-                # print(product_id_list)
+
                 for index in product_id_list: # 1 2
                     for id in product_id_list[index]:
                         # print(id)
                         if self.comboBox_2.currentText() == recipe_list[index][0]:
-                            # print(product_list[id][0][0])
-                            # print(product_list[recipe_list[index]])
                             self.add_checkbox(product_list[id][0][0])
-                            # print(recipe_list[index][0])
-                            # print("Работает")
-
                 # print(production_acc_list)
                 # print(product_list)
                 # print(product_id_list)
@@ -271,6 +238,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print("Учёт продуктов на изготовление собственной продукции")
                 self.fill_combox(db_recipe, self.comboBox_3)
                 self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex())
+
+    def insert_data_to_table(self, db_name):
+        match db_name:
+            case "products_accounting":
+                print("тут insert to "+ db_name)
+                insert_data = defaultdict(list)
+                rows = self.tableWidget_2.rowCount()
+
+                #id продукции
+                # insert_data[0] = 0
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                for row in select_data_from_table:
+                    if row[1] == self.comboBox_3.currentText():
+                        insert_data[0].append(row[0])
+
+                #id продукта
+                select_data_from_table = srv.select_from_table(connection, db_products)
+
+                for row_table in range(rows):
+                    for row in select_data_from_table:
+                        if row[1] == self.tableWidget_2.item(row_table, 0).text():
+                            insert_data[1].append(row[0])
+
+                #дата
+                insert_data[2] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                #использовано продукта
+                for row in range(rows):
+                    insert_data[3].append(float(self.tableWidget_2.item(row, 1).text()))
+
+                #цена использованного продукта
+                for row_table in range(rows):
+                    for row in select_data_from_table:
+                        if row[1] == self.tableWidget_2.item(row_table, 0).text():
+                            insert_data[4].append((float(self.tableWidget_2.item(row_table, 1).text()) * float(row[2])) / 100)
+
+                # проверяем, что запишется в БД
+                # for row in range(len(insert_data[1])):
+                #      print(f'{insert_data[0][0]}, {insert_data[1][row]}, {insert_data[2]}, {insert_data[3][row]}, {insert_data[4][row]}')
+
+                # записываем в БД
+                srv.insert_into_table(connection, db_name, insert_data)
+
+            case "sales_accounting":
+                print("тут insert to " + db_name)
+
 
     def add_tablerow(self, table, db_name, page):
         match page:
@@ -298,7 +311,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     table.setItem(row, 1, QTableWidgetItem(str(gram)))
                     if name_production in recipe_cost_list:
                         cost = recipe_cost_list[name_production]
-                        # table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
                         table.setItem(row, 2, QTableWidgetItem(str(gram * cost[0])))
                         sum = sum + (gram * cost[0])
 
@@ -309,12 +321,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 for row in recipe:
                     recipe_list[row[1]].append([row[2], float(row[3])])
-                    # recipe_list[row[1]].append(float(row[3]))
-                # print(recipe_list)
 
                 table.clearContents()
-
-                # print(name_production)
 
                 ####################################################################################
                 # получаем всю информацию из таблицы рецепты
@@ -325,14 +333,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for row in select_data_from_table:
                     select_production[row[0]].append(row[1])
 
-                # print(select_production)
-
                 name = self.comboBox_3.currentText()
-                # print(recipe_list.keys())
-                # ищем имена по индексам
                 product = srv.select_from_table(connection, db_products)
                 product_list = defaultdict(list)
-                print(product)
 
                 for row in product:
                     product_list[row[0]].append([row[1], float(row[2])])
@@ -342,7 +345,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # 100 грамм - одна порция
                 for id in recipe_list.keys():
                     if name == select_production[id][0]:
-                        # print("мы тут")
                         text_of_recipe = f'{text_of_recipe}\n ------<{name}>------'
                         table.setRowCount(len(recipe_list[id]))
                         for row in range(len(recipe_list[id])):
@@ -355,24 +357,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             table.setItem(row, 1, QTableWidgetItem(str(ceil(value))) )
                 self.textEdit.setText(text_of_recipe)
 
-
-                ####################################################################################
-
-                # table.setRowCount(len(self.verticalLayout_6))
-                # rows = len(self.verticalLayout_6)
-                #
-                # for row in range(rows):
-                #     name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
-                #     gram = self.verticalLayout_11.itemAt(row).widget().value()
-                #     table.setItem(row, 0, QTableWidgetItem(name_production))
-                #     table.setItem(row, 1, QTableWidgetItem(str(gram)))
-                #     if name_production in recipe_cost_list:
-                #         cost = recipe_cost_list[name_production]
-                #         # table.setItem(row, 2, QTableWidgetItem("Это имя есть"))
-                #         table.setItem(row, 2, QTableWidgetItem(str(gram * cost[0])))
-
     def fill_combox(self, db_name, combox):
-        # print("тут fill_combox")
         # получаем всю информацию из таблицы
         select_data_from_table = srv.select_from_table(connection, db_name)
         select_production = []
@@ -451,6 +436,3 @@ srv.check_connection(connection)
 
 main()
 
-# КОД НЕ ДОХОДИТ ДО ЗАКРЫТИЯ СОЕДИНЕНИЯ
-srv.close_connection(connection)
-srv.check_connection(connection)

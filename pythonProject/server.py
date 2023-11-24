@@ -95,7 +95,7 @@ def select_from_table(connection, db_name):
     except Exception as ex:
         print(f'[INFO] Ошибка получения из таблицы {db_name}:', ex)
 
-def insert_into_table(connection, db_name):
+def insert_into_table(connection, db_name, data_array):
     try:
         with connection.cursor() as cursor:
 
@@ -106,11 +106,13 @@ def insert_into_table(connection, db_name):
                     cursor.execute(insert_script, insert_value)
 
                 case "products_accounting":
-                    insert_script = ("INSERT INTO products_accounting "
-                                     "(production_id, product_id, date_accounting, product_used, product_used_cost) "
-                                     "VALUES (%s, %s, %s, %s, %s)")
-                    insert_value = (1, 4, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 333, 4444)
-                    cursor.execute(insert_script, insert_value)
+                    for row in range(len(data_array[1])):
+                        insert_script = ("INSERT INTO products_accounting "
+                                         "(production_id, product_id, date_accounting, product_used, product_used_cost) "
+                                         "VALUES (%s, %s, %s, %s, %s)")
+                        insert_value = (data_array[0][0], data_array[1][row], data_array[2], data_array[3][row], data_array[4][row])
+                        # insert_value = (1, 4, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 333, 4444)
+                        cursor.execute(insert_script, insert_value)
 
                 case "recipe":
                     print("recipe 3")
