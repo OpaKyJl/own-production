@@ -311,8 +311,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     table.setItem(row, 1, QTableWidgetItem(str(gram)))
                     if name_production in recipe_cost_list:
                         cost = recipe_cost_list[name_production]
-                        table.setItem(row, 2, QTableWidgetItem(str(gram * cost[0])))
-                        sum = sum + (gram * cost[0])
+                        value = (gram * cost[0]) / 100
+                        table.setItem(row, 2, QTableWidgetItem(str(value)))
+                        sum = sum + value
 
                 self.label_14.setText("СУММА: " + str(sum))
             case 5:
