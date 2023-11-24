@@ -121,11 +121,12 @@ def insert_into_table(connection, db_name, data_array):
                     print("recipe_cost 4")
 
                 case "sales_accounting":
-                    insert_script = ("INSERT INTO sales_accounting "
-                                     "(production_id, date_accounting, production_sale_grs, price) "
-                                     "VALUES (%s, %s, %s, %s)")
-                    insert_value = (1, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 333, 4444)
-                    cursor.execute(insert_script, insert_value)
+                    for row in range(len(data_array[0])):
+                        insert_script = ("INSERT INTO sales_accounting "
+                                         "(production_id, date_accounting, production_sale_grs, price) "
+                                         "VALUES (%s, %s, %s, %s)")
+                        insert_value = (data_array[0][row], data_array[1], data_array[2][row], data_array[3][row])
+                        cursor.execute(insert_script, insert_value)
 
             print(f'[INFO] Данные успешно добавлены в таблицу {db_name}')
     except Exception as ex:

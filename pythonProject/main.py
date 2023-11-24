@@ -283,6 +283,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             case "sales_accounting":
                 print("тут insert to " + db_name)
+                insert_data = defaultdict(list)
+                rows = self.tableWidget.rowCount()
+
+                # id продукции
+                # брать имя из таблицы
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                for row_table in range(rows):
+                    for row in select_data_from_table:
+                        if row[1] == self.tableWidget.item(row_table, 0).text():
+                            insert_data[0].append(row[0])
+
+                # дата
+                insert_data[1] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                for row in range(rows):
+                    # продаём продукции
+                    insert_data[2].append(float(self.tableWidget.item(row, 1).text()))
+                    # цена продукции
+                    insert_data[3].append(float(self.tableWidget.item(row, 2).text()))
+
+                srv.insert_into_table(connection, db_name, insert_data)
 
 
     def add_tablerow(self, table, db_name, page):
