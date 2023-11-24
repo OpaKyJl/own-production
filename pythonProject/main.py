@@ -63,7 +63,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pushButton_5.clicked.connect(lambda: self.add_tablerow(self.tableWidget_2, db_recipe, self.stackedWidget.currentIndex()))
 
         # self.comboBox_2.currentIndexChanged.connect(lambda: self.add_checkbox("Текст"))
+        # self.comboBox_2.currentIndexChanged.connect(lambda: self.comboBox_2.clear())
         self.comboBox_2.currentIndexChanged.connect(lambda: self.load_info("3-2"))
+        # self.pushButton_11.clicked.connect(lambda: self.load_info("3-2"))
 
 
     def add_spinbox(self):
@@ -131,7 +133,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         checkbox.setMinimumSize(QtCore.QSize(300, 0))
         checkbox.setMaximumSize(QtCore.QSize(300, 16777215))
-        checkbox.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        checkbox.setStyleSheet("background-color: rgb(255, 233, 190);\n"
                                       "color: rgb(43, 89, 250);")
 
         font = QtGui.QFont()
@@ -171,10 +173,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pBtn_products.clicked.connect(lambda: self.load_info(self.stackedWidget.currentIndex()))
 
         self.pBtn_an_sales_product.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(2))
+        # загрузка комбобокса
+        self.pBtn_an_sales_product.clicked.connect(lambda: self.fill_combox(db_products_accounting, self.comboBox_2))
         self.pBtn_an_sales_product.clicked.connect(lambda: (self.load_info(f'{self.stackedWidget.currentIndex()}-{self.stackedWidget_2.currentIndex()}')))
         self.pBtn_an_sales_production.clicked.connect(lambda: self.stackedWidget_2.setCurrentIndex(1))
         self.pBtn_an_sales_production.clicked.connect(lambda: (self.load_info(f'{self.stackedWidget.currentIndex()}-{self.stackedWidget_2.currentIndex()}')))
 
+    def clear_layout(self, layout):
+        for i in reversed(range(layout.count())):
+            layout.itemAt(i).widget().setParent(None)
     def load_info(self, current_page):
         match current_page:
             case 1:
@@ -209,21 +216,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print(production_acc_list)
                 print(product_list)
 
-
-
-                # product_lis = defaultdict(list)
-                # for row in
-
-                # for id in production_acc_list:
-
-
-                # table.clearContents()
-                # table.setRowCount(len(self.verticalLayout_6))
-                # rows = len(self.verticalLayout_6)
-
             case "3-2":
                 print("Анализ продаж продуктов")
-                self.fill_combox(db_products_accounting, self.comboBox_2)
+                self.clear_layout(self.verticalLayout_43)
+
+                # self.comboBox_2.clear()
+                # self.fill_combox(db_products_accounting, self.comboBox_2)
                 # self.comboBox_2.addItem("first")
                 # self.fill_combox(db_sales_accounting, self.comboBox)
                 production_acc = srv.select_from_table(connection, db_products_accounting)
@@ -261,10 +259,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             # print(recipe_list[index][0])
                             # print("Работает")
 
-                print(production_acc_list)
-                print(product_list)
-                print(product_id_list)
-                print(recipe_list)
+                # print(production_acc_list)
+                # print(product_list)
+                # print(product_id_list)
+                # print(recipe_list)
 
             case 4:
                 print("4")
@@ -396,7 +394,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if id == row[0]:
                     select_production_name.append(row[1])
 
-        # combox.clear()
         for name in select_production_name:
             combox.addItem(str(name))
 
