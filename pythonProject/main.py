@@ -68,8 +68,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.comboBox_2.currentIndexChanged.connect(lambda: self.load_info("3-2"))
 
+        # добавляем данные в таблицу
         self.pushButton_6.clicked.connect(lambda: self.insert_data_to_table(db_products_accounting))
         self.pushButton_7.clicked.connect(lambda: self.insert_data_to_table(db_sales_accounting))
+
+        # строим графики для анализа
+        self.pushButton_3.clicked.connect(lambda: self.get_graphics(db_products_accounting))
+        self.pushButton.clicked.connect(lambda: self.get_graphics(db_sales_accounting) )
 
     def add_spinbox(self):
         self.spinBox = QtWidgets.QSpinBox()
@@ -305,6 +310,97 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 srv.insert_into_table(connection, db_name, insert_data)
 
+    def get_graphics(self, db_name):
+        match db_name:
+            case "products_accounting":
+                print("тут данные из таблицы " + db_name)
+                date = defaultdict(list)
+                production_id = defaultdict(list)
+                product_id = defaultdict(list)
+                data_for_an = defaultdict(list)
+                data = defaultdict(list)
+
+                date[0] = self.calendarWidget_5.selectedDate()
+                date[1] = self.calendarWidget_6.selectedDate()
+
+                # чтобы по десять раз не бегать к серверу, запросим сразу все данные
+                # (перенести этот код, что при загрузке страницы делался)
+
+                ##########################################################################
+                # код повторяется (можно в функцию)
+                # id продукции
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                for row in select_data_from_table:
+                    production_id[row[1]].append(row[0])
+
+                # id продукта
+                select_data_from_table = srv.select_from_table(connection, db_products)
+
+                for row in select_data_from_table:
+                    product_id[row[1]].append(row[0])
+                ##########################################################################
+                layout = self.verticalLayout_43
+
+                # соотносим имена продукции с id
+                for name in production_id:
+                    if name == self.comboBox_2.currentText():
+                        data_for_an["продукция"].append([name, production_id[name][0]])
+                # соотносим имена продуктов с id
+                for row in range(layout.count()):
+                    for name in product_id:
+                        if layout.itemAt(row).widget().checkState() == 2:
+                            if name == layout.itemAt(row).widget().text():
+                                data_for_an["продукты"].append([name, product_id[name][0]])
+
+                id_production = data_for_an["продукция"][0][1]
+                # теперь выбрать данные по дате
+                select_data_from_table = srv.select_from_table(connection, db_name)
+                for row in select_data_from_table:
+                    # выбираем строки по id продукции и продукта
+                    for id in range(len(data_for_an["продукты"])):
+                        if ((row[1] == id_production) and (row[2] == data_for_an["продукты"][id][1]) and
+                                ((row[3] >= date[0]) and (row[3] <= date[1]))):
+                            data[row[1]].append([row[2], row[3], row[4], row[5]])
+
+                print(data)
+
+                # осталось построить графики по выбранной информации
+
+            case "sales_accounting":
+                print("тут данные из таблицы " + db_name)
+                date = defaultdict(list)
+                production_id = defaultdict(list)
+                data_for_an = defaultdict(list)
+                data = defaultdict(list)
+
+                date[0] = self.calendarWidget.selectedDate()
+                date[1] = self.calendarWidget_2.selectedDate()
+
+                ##########################################################################
+                # код повторяется (можно в функцию)
+                # id продукции
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                for row in select_data_from_table:
+                    production_id[row[1]].append(row[0])
+                ##########################################################################
+                layout = self.verticalLayout_19
+                # соотносим имена продукции с id
+                for row in range(layout.count()):
+                    for name in production_id:
+                        if name == layout.itemAt(row).widget().currentText():
+                            data_for_an["продукция"].append([name, production_id[name][0]])
+
+                # теперь выбрать данные по дате
+                select_data_from_table = srv.select_from_table(connection, db_name)
+                for row in select_data_from_table:
+                    # выбираем строки по id продукции и продукта
+                    for id in range(len(data_for_an["продукция"])):
+                        if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
+                            data[row[1]].append([row[2], row[3], row[4]])
+
+                print(data)
+
+                # осталось построить графики по выбранной информации
 
     def add_tablerow(self, table, db_name, page):
         match page:
