@@ -8,7 +8,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v015 import Ui_MainWindow
+from vcr_gui_v017 import Ui_MainWindow
 import server as srv
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
@@ -75,6 +75,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # строим графики для анализа
         self.pushButton_3.clicked.connect(lambda: self.get_graphics(db_products_accounting))
         self.pushButton.clicked.connect(lambda: self.get_graphics(db_sales_accounting) )
+
+        self.checkBox_2.stateChanged.connect(self.get_all_products)
+
+    def get_all_products(self):
+        layout = self.verticalLayout_43
+        products_from_table = srv.select_from_table(connection, db_products)
+
+        if self.checkBox_2.checkState() == 2:
+            self.clear_layout(layout)
+            for row in products_from_table:
+                self.add_checkbox(row[1])
+        else:
+            self.load_info("3-2")
 
     def add_spinbox(self):
         self.spinBox = QtWidgets.QSpinBox()
@@ -201,40 +214,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             case "3-2":
                 print("Анализ продаж продуктов")
-                self.clear_layout(self.verticalLayout_43)
-
-                production_acc = srv.select_from_table(connection, db_products_accounting)
-                production_acc_list = defaultdict(list)
-                product_id_list = defaultdict(list)
-
-                for row in production_acc:
-                    production_acc_list[row[1]].append([row[2], row[3], float(row[4]), float(row[5])])
-                    product_id_list[row[1]].append(row[2])
-
+                layout = self.verticalLayout_43
                 products_from_table = srv.select_from_table(connection, db_products)
-                product_list = defaultdict(list)
+                if self.checkBox_2.checkState() == 0:
+                    self.clear_layout(layout)
 
-                for row in products_from_table:
-                    product_list[row[0]].append([row[1], float(row[2])])
+                    production_acc = srv.select_from_table(connection, db_products_accounting)
+                    production_acc_list = defaultdict(list)
+                    product_id_list = defaultdict(list)
 
-                recipe = srv.select_from_table(connection, db_recipe_cost)
-                recipe_list = defaultdict(list)
+                    for row in production_acc:
+                        production_acc_list[row[1]].append([row[2], row[3], float(row[4]), float(row[5])])
+                        product_id_list[row[1]].append(row[2])
 
-                for row in recipe:
-                    recipe_list[row[0]].append(row[1])
+                    # products_from_table = srv.select_from_table(connection, db_products)
+                    product_list = defaultdict(list)
 
-                for id in product_id_list:
-                    product_id_list[id] = set(product_id_list[id])
+                    for row in products_from_table:
+                        product_list[row[0]].append([row[1], float(row[2])])
 
-                for index in product_id_list: # 1 2
-                    for id in product_id_list[index]:
-                        # print(id)
-                        if self.comboBox_2.currentText() == recipe_list[index][0]:
-                            self.add_checkbox(product_list[id][0][0])
-                # print(production_acc_list)
-                # print(product_list)
-                # print(product_id_list)
-                # print(recipe_list)
+                    recipe = srv.select_from_table(connection, db_recipe_cost)
+                    recipe_list = defaultdict(list)
+
+                    for row in recipe:
+                        recipe_list[row[0]].append(row[1])
+
+                    for id in product_id_list:
+                        product_id_list[id] = set(product_id_list[id])
+
+                    for index in product_id_list: # 1 2
+                        for id in product_id_list[index]:
+                            # print(id)
+                            if self.comboBox_2.currentText() == recipe_list[index][0]:
+                                self.add_checkbox(product_list[id][0][0])
+                    # print(production_acc_list)
+                    # print(product_list)
+                    # print(product_id_list)
+                    # print(recipe_list)
 
             case 4:
                 print("4")
@@ -323,6 +339,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date[0] = self.calendarWidget_5.selectedDate()
                 date[1] = self.calendarWidget_6.selectedDate()
 
+                # if self.checkBox_2.checkState() == 2:
+                #     self.clear_layout(self.verticalLayout_43)
+                #     print("показываем все продукты")
+                if self.checkBox_3.checkState() == 2:
+                    print("анализируем все продукты без учёта продукции")
+
+                # if self.checkBox.checkState() == 2:
+                #     print("делаем анализ продуктов без учёта продукции")
+
                 # чтобы по десять раз не бегать к серверу, запросим сразу все данные
                 # (перенести этот код, что при загрузке страницы делался)
 
@@ -340,6 +365,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     product_id[row[1]].append(row[0])
                 ##########################################################################
                 layout = self.verticalLayout_43
+
+                # if self.checkBox_2.checkState() == 2:
+                #     self.clear_layout(layout)
+                #     for row in select_data_from_table:
+                #         self.add_checkbox(row[1])
+                #     print("показываем все продукты")
 
                 # соотносим имена продукции с id
                 for name in production_id:
@@ -362,7 +393,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 ((row[3] >= date[0]) and (row[3] <= date[1]))):
                             data[row[1]].append([row[2], row[3], row[4], row[5]])
 
-                print(data)
+                # print(data)
 
                 # осталось построить графики по выбранной информации
 
@@ -398,7 +429,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
                             data[row[1]].append([row[2], row[3], row[4]])
 
-                print(data)
+                # print(data)
 
                 # осталось построить графики по выбранной информации
 
