@@ -342,8 +342,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # if self.checkBox_2.checkState() == 2:
                 #     self.clear_layout(self.verticalLayout_43)
                 #     print("показываем все продукты")
-                if self.checkBox_3.checkState() == 2:
-                    print("анализируем все продукты без учёта продукции")
+                # if self.checkBox_3.checkState() == 2:
+                #     print("анализируем все продукты без учёта продукции")
 
                 # if self.checkBox.checkState() == 2:
                 #     print("делаем анализ продуктов без учёта продукции")
@@ -374,8 +374,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 # соотносим имена продукции с id
                 for name in production_id:
-                    if name == self.comboBox_2.currentText():
+                    # если не указано, то выбираем по выбранной продукции
+                    # иначе для всей продукции анализируем
+                    if self.checkBox_3.checkState() == 0:
+                        print("не для всей")
+                        if name == self.comboBox_2.currentText():
+                            data_for_an["продукция"].append([name, production_id[name][0]])
+                    else:
+                        print("для всей")
                         data_for_an["продукция"].append([name, production_id[name][0]])
+
+                print(data_for_an)
                 # соотносим имена продуктов с id
                 for row in range(layout.count()):
                     for name in product_id:
@@ -383,17 +392,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             if name == layout.itemAt(row).widget().text():
                                 data_for_an["продукты"].append([name, product_id[name][0]])
 
-                id_production = data_for_an["продукция"][0][1]
                 # теперь выбрать данные по дате
                 select_data_from_table = srv.select_from_table(connection, db_name)
                 for row in select_data_from_table:
                     # выбираем строки по id продукции и продукта
-                    for id in range(len(data_for_an["продукты"])):
-                        if ((row[1] == id_production) and (row[2] == data_for_an["продукты"][id][1]) and
-                                ((row[3] >= date[0]) and (row[3] <= date[1]))):
-                            data[row[1]].append([row[2], row[3], row[4], row[5]])
+                    for production in range(len(data_for_an["продукция"])):
+                        for id in range(len(data_for_an["продукты"])):
+                            if ((row[1] == data_for_an["продукция"][production][1]) and (row[2] == data_for_an["продукты"][id][1]) and
+                                    ((row[3] >= date[0]) and (row[3] <= date[1]))):
+                                data[row[1]].append([row[2], row[3], row[4], row[5]])
 
-                # print(data)
+                print(data)
 
                 # осталось построить графики по выбранной информации
 

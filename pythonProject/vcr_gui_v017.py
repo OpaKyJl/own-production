@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(1300, 700)
+        # MainWindow.resize(1300, 700)
         MainWindow.setMinimumSize(QtCore.QSize(1300, 700))
         MainWindow.setStyleSheet("gridline-color: rgb(177, 255, 170);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
