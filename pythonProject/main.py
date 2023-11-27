@@ -17,6 +17,7 @@ from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationTo
 from Graphics import plot_graphics, data_read # тут логика графиков
 import matplotlib.pyplot as plt
 import pandas as pd
+import mplcursors as mplc
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
@@ -33,6 +34,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, *args, **kwargs):
         QMainWindow.__init__(self)
         self.reload()
+        data = defaultdict(list)
+        self.canvas = MyMplCanvas(self.get_graphic(data))
+        self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
+        self.companovka_for_mpl.addWidget(self.canvas)
+
+        # self.toolbar.hide()
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
 
     def reload(self):
         self.setupUi(self)
@@ -340,128 +349,90 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # return fig
 
         # получаем данные и строим по тим график
-        fig, axes = plt.subplots()
+        fig = plt.figure()
+        # fig, axes = plt.subplots()
+
         # axes.plot()
         date_list = []
         # gram_list = []
         data_list = defaultdict(list)
 
         for row in data:
-            # data[row][1]
             # выбираем продукцию
-            # print(row)
             for id in data[row]:
-                # тут все записи по соответствующему id продукции
-                # print(id)
-                # # print(id[1])
-                # date_list.append(id[1].strftime('%Y-%m-%d'))
-                # print(datetime.datetime.strptime(id[1].strftime('%Y-%m-%d'), '%Y-%m-%d'))
-                # # gram_list.append(float(id[2]))
-                # print(id[2])
-
-                # нужно сделать датой, а не строкой
                 data_list[id[0]].append([[id[1].strftime('%Y-%m-%d')], [float(id[2])]])
             print("---------------")
-            # print(data[row][1])
-        # print(date_list)
+
         x = ["2023-11-26 00:00:00", "2023-11-27 00:00:00"]
         y = [5.00, 5.00]
 
-        # df = pd.DataFrame(data, columns=['1', '2'])
-        # df = pd.DataFrame(list(zip(date_list, gram_list)), columns=['Дата', 'Грамм'])
-        # # выставляем строки столбца "datum" индексами
-        # df.set_index(keys='Дата', drop=True, inplace=True)
-        # print(df)
         print(data_list)
-
-        # print(gram_list)
-
-        # пока данные разные могут иметь одну дату (из-за этого вылетает)
-        # x = [date_list]
-        # y = [gram_list]
 
         df = pd.DataFrame()
 
-        # date_list = set(date_list)
-
-        # date_list.sort()
-        # print(date_list)
-        # df['Дата'] = date_list
-        # df = pd.DataFrame(list(zip(date_list)), columns=['Дата'])
-        # df.set_index(keys='Дата', drop=True, inplace=True)
-        # date_list = []
         for value in data_list:
             print(value)
             date_list = []
             gram_list = []
             date_gram_list = defaultdict(list)
             for row in data_list[value]:
-                print(row[0][0], row[1][0])
-                # plt.plot(row[0][0], row[1][0])
-                print("Проверка" + row[0][0])
-                print(date_list)
+                # print(row[0][0], row[1][0])
+                # print("Проверка" + row[0][0])
+                # print(date_list)
                 if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() in date_list:
-                    print("уже есть")
+                    # print("уже есть")
                     for date in date_list:
                         # print(row[0][0] + "=" + date)
                         if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
-                            print("тут схоже")
-                            print(date_gram_list[date])
+                            # print("тут схоже")
+                            # print(date_gram_list[date])
                             date_gram_list[date][0] += row[1][0]
                 else:
-                    # print(row[0][0])
-                    # print(datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date())
                     d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
                     date_list.append(d)
                     gram_list.append(row[1][0])
                     date_gram_list[d].append(row[1][0])
             date_list.sort()
 
-            print(date_list)
-            print(date_gram_list)
-            # print(value, gram_list)
-            # gram_list = []
-            # print(len(date_list))
+            # print(date_list)
+            # print(date_gram_list)
+
             for id in range(len(date_list)):
                 # print(id)
                 gram_list[id] = date_gram_list[date_list[id]][0]
             print(date_list)
             print(gram_list)
-            # axes[value].plot(date_list, gram_list)
+
+            # mplc.cursor(hover=True)
             plt.plot(date_list, gram_list)
-
-            # df = pd.DataFrame(list(zip(date_list)), columns=['Дата'])
-            # df.set_index(keys='Дата', drop=True, inplace=True)
-            # df[value] = gram_list
-            # plt.plot(df.index, df[value])
-            # df = pd.DataFrame(list(zip(date_list, gram_list)), columns=['Дата', 'Грамм'])
-            # date_list = set(date_list)
-            # print(date_list, gram_list)
+            # ax = plt.plot(date_list, gram_list)
+            # ax.set_xlabel('Дата')
+            # ax.set_ylabel('Средний объём продаж')
+            #
+            # plt.grid(which='major')
+            # plt.grid(which='minor')
             print("----")
-            # plt.plot(data_list[value])
-            # print(value)
 
-        # print(date_list, gram_list)
-
-        # plt.plot(df.index, df.values)
-
-        # print(df)
-        plt.show()
+        # plt.show()
         print("конец построения графиков")
 
-    def prepare_canvas_and_toolbar(self):
+        # axes.plot()
+        return fig
+
+    def prepare_canvas_and_toolbar(self, data):
         self.companovka_for_mpl.removeWidget(self.canvas)
         self.canvas.hide()
-        self.canvas = MyMplCanvas(self.get_graphic())
+        self.canvas = MyMplCanvas(self.get_graphic(data))
         self.companovka_for_mpl.addWidget(self.canvas)
 
         self.toolbar.hide()
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
 
-        self.comboBox_2.setStyleSheet("color: rgb(0, 85, 255);\n"
-                                      "selection-color: rgb(0, 85, 255);\n"
-                                      "selection-background-color: rgb(170, 255, 255);")
+
+        # self.comboBox_2.setStyleSheet("color: rgb(0, 85, 255);\n"
+        #                               "selection-color: rgb(0, 85, 255);\n"
+        #                               "selection-background-color: rgb(170, 255, 255);")
 
     def get_graphics(self, db_name):
         match db_name:
@@ -545,13 +516,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 ########################################################################################
 
-                # # рисуем наш плот
-                # self.canvas = MyMplCanvas(self.get_graphic())
+                # рисуем наш плот
+
+                # if self.companovka_for_mpl is not None:
+                #     self.companovka_for_mpl.removeWidget(self.canvas)
+                #     self.canvas.hide()
+                # self.canvas = MyMplCanvas(self.get_graphic(data))
                 # self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
                 # self.companovka_for_mpl.addWidget(self.canvas)
+                #
+                # # self.toolbar.hide()
                 # self.toolbar = NavigationToolbar(self.canvas, self)
                 # self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
-                self.get_graphic(data)
+                self.prepare_canvas_and_toolbar(data)
+                # fig = self.get_graphic(data)
+
+                # self.companovka_for_mpl.removeWidget(self.canvas)
+                # self.canvas.hide()
+                # self.canvas = MyMplCanvas(self.get_graphic(data))
+                # self.companovka_for_mpl.addWidget(self.canvas)
+                #
+                # self.toolbar.hide()
 
                 #///////////////////////////////////////////////////////////////////////////////////
 
