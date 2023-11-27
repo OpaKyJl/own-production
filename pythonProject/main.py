@@ -14,7 +14,6 @@ import server as srv
 
 from MplForWidget import MyMplCanvas
 from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
-from Graphics import plot_graphics, data_read # тут логика графиков
 import matplotlib.pyplot as plt
 import pandas as pd
 import mplcursors as mplc
