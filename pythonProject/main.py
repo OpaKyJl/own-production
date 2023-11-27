@@ -11,12 +11,18 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
 from vcr_gui_v017 import Ui_MainWindow
 import server as srv
 
+from MplForWidget import MyMplCanvas
+from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
+from Graphics import plot_graphics, data_read # тут логика графиков
+
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
 # from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationToolbar
 
 
 # file_path = 'salesmonthly.csv'
+# путь к датасету
+file_path = 'salesmonthly.csv'
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -326,6 +332,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 srv.insert_into_table(connection, db_name, insert_data)
 
+    def get_graphic(self):
+        fig = plot_graphics(file_path, "M01AB")
+        return fig
+
+    def prepare_canvas_and_toolbar(self):
+        self.companovka_for_mpl.removeWidget(self.canvas)
+        self.canvas.hide()
+        self.canvas = MyMplCanvas(self.get_graphic())
+        self.companovka_for_mpl.addWidget(self.canvas)
+
+        self.toolbar.hide()
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
+
+        self.comboBox_2.setStyleSheet("color: rgb(0, 85, 255);\n"
+                                      "selection-color: rgb(0, 85, 255);\n"
+                                      "selection-background-color: rgb(170, 255, 255);")
+
     def get_graphics(self, db_name):
         match db_name:
             case "products_accounting":
@@ -406,6 +430,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 # осталось построить графики по выбранной информации
 
+                ########################################################################################
+
+                # list_data_header = data_read(file_path)[1]
+                # self.comboBox_2.clear()
+                # for name in list_data_header:
+                #     self.comboBox_2.addItem(name)
+
+                # рисуем наш плот
+                self.canvas = MyMplCanvas(self.get_graphic())
+                self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
+                self.companovka_for_mpl.addWidget(self.canvas)
+                self.toolbar = NavigationToolbar(self.canvas, self)
+                self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
+
+                ########################################################################################
+
             case "sales_accounting":
                 print("тут данные из таблицы " + db_name)
                 date = defaultdict(list)
@@ -438,7 +478,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
                             data[row[1]].append([row[2], row[3], row[4]])
 
-                # print(data)
+                print(data)
 
                 # осталось построить графики по выбранной информации
 
