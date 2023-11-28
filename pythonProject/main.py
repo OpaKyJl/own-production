@@ -33,14 +33,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, *args, **kwargs):
         QMainWindow.__init__(self)
         self.reload()
-        data = defaultdict(list)
-        self.canvas = MyMplCanvas(self.get_graphic(data))
-        self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
-        self.companovka_for_mpl.addWidget(self.canvas)
-
-        # self.toolbar.hide()
-        self.toolbar = NavigationToolbar(self.canvas, self)
-        self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
+        # data = defaultdict(list)
+        # self.canvas = MyMplCanvas(self.get_graphic(data))
+        # self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
+        # self.companovka_for_mpl.addWidget(self.canvas)
+        #
+        # # self.toolbar.hide()
+        # self.toolbar = NavigationToolbar(self.canvas, self)
+        # self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
 
     def reload(self):
         self.setupUi(self)
@@ -57,6 +57,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pBtn_products.setStyleSheet(pBtn_style_sheet)
         self.pBtn_an_sales_product.setStyleSheet(pBtn_style_sheet)
         self.pBtn_an_sales_production.setStyleSheet(pBtn_style_sheet)
+
+        data = defaultdict(list)
+        self.canvas = MyMplCanvas(self.get_graphic(data))
+        self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
+
+        # сначала добавляем тулбар
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.companovka_for_mpl.addWidget(self.toolbar)
+
+        self.companovka_for_mpl.addWidget(self.canvas)
 
         self.add_functions()
         self.btn_navigation()
@@ -91,6 +101,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # строим графики для анализа
         self.pushButton_3.clicked.connect(lambda: self.get_graphics(db_products_accounting))
+        # self.pushButton_3.clicked.connect(lambda: self.prepare_canvas_and_toolbar(data))
+        # self.prepare_canvas_and_toolbar(data)
         self.pushButton.clicked.connect(lambda: self.get_graphics(db_sales_accounting) )
 
         self.checkBox_2.stateChanged.connect(self.get_all_products)
@@ -269,6 +281,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     # print(product_id_list)
                     # print(recipe_list)
 
+                # сюда загрузку графика
+
             case 4:
                 print("4")
 
@@ -422,16 +436,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.companovka_for_mpl.removeWidget(self.canvas)
         self.canvas.hide()
         self.canvas = MyMplCanvas(self.get_graphic(data))
-        self.companovka_for_mpl.addWidget(self.canvas)
 
+        #сначала добавляем тулбар
         self.toolbar.hide()
         self.toolbar = NavigationToolbar(self.canvas, self)
-        self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
+        self.companovka_for_mpl.addWidget(self.toolbar)
 
-
-        # self.comboBox_2.setStyleSheet("color: rgb(0, 85, 255);\n"
-        #                               "selection-color: rgb(0, 85, 255);\n"
-        #                               "selection-background-color: rgb(170, 255, 255);")
+        self.companovka_for_mpl.addWidget(self.canvas)
 
     def get_graphics(self, db_name):
         match db_name:
@@ -719,6 +730,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.pBtn_back_to_main_7.clicked.connect(lambda: self.reload())
         self.pBtn_back_to_main_7.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
+        # self.prepare_canvas_and_toolbar(data)
+        # data = defaultdict(list)
+        # self.pBtn_back_to_main_7.clicked.connect(lambda: self.prepare_canvas_and_toolbar(data))
 
         #################################################################################################
 
