@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import sys
+import threading
 
 import time
 from collections import defaultdict
@@ -9,7 +10,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v020 import Ui_MainWindow
+from vcr_gui_v021 import Ui_MainWindow
 import server as srv
 
 from MplForWidget import MyMplCanvas
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def reload(self):
         self.setupUi(self)
+        self.set_default_status_bar()
 
         self.setWindowIcon(QtGui.QIcon("img\moon.png"))
         # self.showMaximized()
@@ -119,7 +121,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.checkBox_2.stateChanged.connect(self.get_all_products)
 
+    def set_default_status_bar(self):
+        self.statusBar.clearMessage()
+        self.statusBar.setStyleSheet("background-color: #b1ffaa")
+
     def set_status_bar(self, msg):
+        interval = 5
         match msg:
             case "сохранить":
                 self.statusBar.showMessage("Данные сохранены")
@@ -128,6 +135,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case "анализ":
                 self.statusBar.showMessage("Данные предоставлены для анализа")
                 self.statusBar.setStyleSheet("background-color: #00FF7F")
+
+            case "дата":
+                self.statusBar.showMessage("Некорректная дата")
+                self.statusBar.setStyleSheet("background-color: red")
+
+        clear = self.set_default_status_bar
+
+        # #b1ffaa
+        t = threading.Timer(interval, clear)
+        t.start()
+
+
     def get_all_products(self):
         layout = self.verticalLayout_43
         products_from_table = srv.select_from_table(connection, db_products)
@@ -146,6 +165,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.spinBox.setMaximumSize(QtCore.QSize(300, 16777215))
         self.spinBox.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                      "color: rgb(43, 89, 250);")
+        self.spinBox.setMinimum(50)
         self.spinBox.setMaximum(999999)
 
         font = QtGui.QFont()
@@ -579,75 +599,78 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date[0] = self.calendarWidget_5.selectedDate()
                 date[1] = self.calendarWidget_6.selectedDate()
 
-                # if self.checkBox_2.checkState() == 2:
-                #     self.clear_layout(self.verticalLayout_43)
-                #     print("показываем все продукты")
-                # if self.checkBox_3.checkState() == 2:
-                #     print("анализируем все продукты без учёта продукции")
+                if date[0] > date[1]:
+                    self.set_status_bar("дата")
+                else:
+                    # if self.checkBox_2.checkState() == 2:
+                    #     self.clear_layout(self.verticalLayout_43)
+                    #     print("показываем все продукты")
+                    # if self.checkBox_3.checkState() == 2:
+                    #     print("анализируем все продукты без учёта продукции")
 
-                # if self.checkBox.checkState() == 2:
-                #     print("делаем анализ продуктов без учёта продукции")
+                    # if self.checkBox.checkState() == 2:
+                    #     print("делаем анализ продуктов без учёта продукции")
 
-                # чтобы по десять раз не бегать к серверу, запросим сразу все данные
-                # (перенести этот код, что при загрузке страницы делался)
+                    # чтобы по десять раз не бегать к серверу, запросим сразу все данные
+                    # (перенести этот код, что при загрузке страницы делался)
 
-                ##########################################################################
-                # код повторяется (можно в функцию)
-                # id продукции
-                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
-                for row in select_data_from_table:
-                    production_id[row[1]].append(row[0])
+                    ##########################################################################
+                    # код повторяется (можно в функцию)
+                    # id продукции
+                    select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                    for row in select_data_from_table:
+                        production_id[row[1]].append(row[0])
 
-                # id продукта
-                select_data_from_table = srv.select_from_table(connection, db_products)
+                    # id продукта
+                    select_data_from_table = srv.select_from_table(connection, db_products)
 
-                for row in select_data_from_table:
-                    product_id[row[1]].append(row[0])
-                ##########################################################################
-                layout = self.verticalLayout_43
+                    for row in select_data_from_table:
+                        product_id[row[1]].append(row[0])
+                    ##########################################################################
+                    layout = self.verticalLayout_43
 
-                # if self.checkBox_2.checkState() == 2:
-                #     self.clear_layout(layout)
-                #     for row in select_data_from_table:
-                #         self.add_checkbox(row[1])
-                #     print("показываем все продукты")
+                    # if self.checkBox_2.checkState() == 2:
+                    #     self.clear_layout(layout)
+                    #     for row in select_data_from_table:
+                    #         self.add_checkbox(row[1])
+                    #     print("показываем все продукты")
 
-                # соотносим имена продукции с id
-                for name in production_id:
-                    # если не указано, то выбираем по выбранной продукции
-                    # иначе для всей продукции анализируем
-                    if self.checkBox_3.checkState() == 0:
-                        print("не для всей")
-                        if name == self.comboBox_2.currentText():
+                    # соотносим имена продукции с id
+                    for name in production_id:
+                        # если не указано, то выбираем по выбранной продукции
+                        # иначе для всей продукции анализируем
+                        if self.checkBox_3.checkState() == 0:
+                            print("не для всей")
+                            if name == self.comboBox_2.currentText():
+                                data_for_an["продукция"].append([name, production_id[name][0]])
+                        else:
+                            print("для всей")
                             data_for_an["продукция"].append([name, production_id[name][0]])
-                    else:
-                        print("для всей")
-                        data_for_an["продукция"].append([name, production_id[name][0]])
 
-                # print(data_for_an)
-                # соотносим имена продуктов с id
-                for row in range(layout.count()):
-                    for name in product_id:
-                        if layout.itemAt(row).widget().checkState() == 2:
-                            if name == layout.itemAt(row).widget().text():
-                                data_for_an["продукты"].append([name, product_id[name][0]])
+                    # print(data_for_an)
+                    # соотносим имена продуктов с id
+                    for row in range(layout.count()):
+                        for name in product_id:
+                            if layout.itemAt(row).widget().checkState() == 2:
+                                if name == layout.itemAt(row).widget().text():
+                                    data_for_an["продукты"].append([name, product_id[name][0]])
 
-                # теперь выбрать данные по дате
-                select_data_from_table = srv.select_from_table(connection, db_name)
-                for row in select_data_from_table:
-                    # выбираем строки по id продукции и продукта
-                    for production in range(len(data_for_an["продукция"])):
-                        for id in range(len(data_for_an["продукты"])):
-                            if ((row[1] == data_for_an["продукция"][production][1]) and (row[2] == data_for_an["продукты"][id][1]) and
-                                    ((row[3] >= date[0]) and (row[3] <= date[1]))):
-                                data[row[1]].append([row[2], row[3], row[4], row[5]])
+                    # теперь выбрать данные по дате
+                    select_data_from_table = srv.select_from_table(connection, db_name)
+                    for row in select_data_from_table:
+                        # выбираем строки по id продукции и продукта
+                        for production in range(len(data_for_an["продукция"])):
+                            for id in range(len(data_for_an["продукты"])):
+                                if ((row[1] == data_for_an["продукция"][production][1]) and (row[2] == data_for_an["продукты"][id][1]) and
+                                        ((row[3] >= date[0]) and (row[3] <= date[1]))):
+                                    data[row[1]].append([row[2], row[3], row[4], row[5]])
 
-                # print(data)
+                    # print(data)
 
-                # осталось построить графики по выбранной информации
-                # рисуем наш плот
-                self.prepare_canvas_and_toolbar(data, db_name, 1)
-                self.set_status_bar("анализ")
+                    # осталось построить графики по выбранной информации
+                    # рисуем наш плот
+                    self.prepare_canvas_and_toolbar(data, db_name, 1)
+                    self.set_status_bar("анализ")
 
             case "sales_accounting":
                 print("тут данные из таблицы " + db_name)
@@ -659,32 +682,37 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date[0] = self.calendarWidget.selectedDate()
                 date[1] = self.calendarWidget_2.selectedDate()
 
-                ##########################################################################
-                # код повторяется (можно в функцию)
-                # id продукции
-                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
-                for row in select_data_from_table:
-                    production_id[row[1]].append(row[0])
-                ##########################################################################
-                layout = self.verticalLayout_19
-                # соотносим имена продукции с id
-                for row in range(layout.count()):
-                    for name in production_id:
-                        if name == layout.itemAt(row).widget().currentText():
-                            data_for_an["продукция"].append([name, production_id[name][0]])
+                if date[0] > date[1]:
+                    self.set_status_bar("дата")
+                else:
+                    ##########################################################################
+                    # код повторяется (можно в функцию)
+                    # id продукции
+                    select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                    for row in select_data_from_table:
+                        production_id[row[1]].append(row[0])
+                    ##########################################################################
+                    layout = self.verticalLayout_19
+                    # соотносим имена продукции с id
+                    for row in range(layout.count()):
+                        for name in production_id:
+                            if name == layout.itemAt(row).widget().currentText():
+                                data_for_an["продукция"].append([name, production_id[name][0]])
 
-                # теперь выбрать данные по дате
-                select_data_from_table = srv.select_from_table(connection, db_name)
-                for row in select_data_from_table:
-                    # выбираем строки по id продукции и продукта
-                    for id in range(len(data_for_an["продукция"])):
-                        if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
-                            data[row[1]].append([row[2], row[3], row[4]])
+                    # теперь выбрать данные по дате
+                    select_data_from_table = srv.select_from_table(connection, db_name)
+                    for row in select_data_from_table:
+                        # выбираем строки по id продукции и продукта
+                        for id in range(len(data_for_an["продукция"])):
+                            if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
+                                data[row[1]].append([row[2], row[3], row[4]])
 
-                print(data)
+                    print(data)
 
-                # осталось построить графики по выбранной информации
-                self.prepare_canvas_and_toolbar(data, db_name, 2)
+                    # осталось построить графики по выбранной информации
+                    self.prepare_canvas_and_toolbar(data, db_name, 2)
+
+                    self.set_status_bar("анализ")
 
     def add_tablerow(self, table, db_name, page):
         match page:
@@ -705,16 +733,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 #########################################################################
                 sum = 0
 
+                name_list = []
                 for row in range(rows):
                     name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
-                    gram = self.verticalLayout_11.itemAt(row).widget().value()
-                    table.setItem(row, 0, QTableWidgetItem(name_production))
-                    table.setItem(row, 1, QTableWidgetItem(str(gram)))
-                    if name_production in recipe_cost_list:
-                        cost = recipe_cost_list[name_production]
-                        value = (gram * cost[0]) / 100
-                        table.setItem(row, 2, QTableWidgetItem(str(value)))
-                        sum = sum + value
+                    # print(name_list)
+                    if name_production in name_list:
+                        # print("1")
+                        for row_in_table in range(table.rowCount()):
+                            # print("тут запись")
+                            # print(row_in_table)
+                            if table.item(row_in_table, 0).text() == name_production:
+                                print("1")
+                            #     table.itemAt(row_in_table, 1).
+                            #     float(self.tableWidget.item(row, 2).text())
+                                print(row_in_table)
+                                # print(float(table.item(0, 1).text()))
+                            #     print(table.itemAt(row_in_table, 1).text())
+                            #     print(self.verticalLayout_11.itemAt(row).widget().value() + float(table.itemAt(row_in_table, 1).text()))
+                            #     gram = self.verticalLayout_11.itemAt(row).widget().value() + float(table.item(row_in_table, 1).text())
+                            #     # print("2")
+                            # #     # table.setItem(row, 0, QTableWidgetItem(name_production))
+                            # #     table.editItem()
+                            #     table.itemAt(row_in_table, 1).setText(str(gram))
+                            #     # table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
+                            # if name_production in recipe_cost_list:
+                            #     cost = recipe_cost_list[name_production]
+                            #     value = (gram * cost[0]) / 100
+                            #     # table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
+                            #     table.itemAt(row_in_table, 2).setText(str(value))
+                            #     sum = sum + value
+                            # print("2")
+                    else:
+                        name_list.append(name_production)
+                        gram = self.verticalLayout_11.itemAt(row).widget().value()
+                        table.setItem(row, 0, QTableWidgetItem(name_production))
+                        table.setItem(row, 1, QTableWidgetItem(str(gram)))
+                        if name_production in recipe_cost_list:
+                            cost = recipe_cost_list[name_production]
+                            value = (gram * cost[0]) / 100
+                            table.setItem(row, 2, QTableWidgetItem(str(value)))
+                            sum = sum + value
+
+                    print(name_list)
 
                 self.label_14.setText("СУММА: " + str(sum))
             case 5:

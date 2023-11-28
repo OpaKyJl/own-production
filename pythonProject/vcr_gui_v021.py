@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v020.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v021.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -1062,6 +1062,7 @@ class Ui_MainWindow(object):
         self.spinBox_3.setFont(font)
         self.spinBox_3.setStyleSheet("color: rgb(43, 89, 250);\n"
 "background-color: rgb(255, 255, 255);")
+        self.spinBox_3.setMinimum(50)
         self.spinBox_3.setMaximum(999999)
         self.spinBox_3.setObjectName("spinBox_3")
         self.verticalLayout_13.addWidget(self.spinBox_3)
