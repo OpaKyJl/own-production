@@ -760,37 +760,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 name_list = []
                 for row in range(rows):
-                    name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
-                    # # print(name_list)
-                    # if name_production in name_list:
-                    #     # print("1")
-                    for row_in_table in range(table.rowCount()):
-                        # print("тут запись")
-                        # print(row_in_table)
-                        if table.item(row_in_table, 0).text() == name_production:
+                     name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
+                     for row_in_table in range(table.rowCount()):
+                         if table.item(row_in_table, 0).text() == name_production:
                             gram = self.verticalLayout_11.itemAt(row).widget().value() + float(table.item(row_in_table, 1).text())
                             table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
-                        if name_production in recipe_cost_list:
-                            cost = recipe_cost_list[name_production]
-                            value = (gram * cost[0]) / 100
-                            table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
-                                # table.itemAt(row_in_table, 2).setText(str(value))
-                            # sum = sum + gram
-                            # print("2")
-                    # else:
-                    #     gram = self.verticalLayout_11.itemAt(row).widget().value()
-                    #     table.setItem(row_in_table, 0, QTableWidgetItem(name_production))
-                    #     table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
-                    #     if name_production in recipe_cost_list:
-                    #         cost = recipe_cost_list[name_production]
-                    #         value = (gram * cost[0]) / 100
-                    #         table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
-                    #         # sum = sum + value
+                            if name_production in recipe_cost_list:
+                                print(name_production)
+                                cost = recipe_cost_list[name_production]
+                                print(cost[0])
+                                value = (gram * cost[0]) / 100
+                                table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
+
 
                 for rows in range(table.rowCount()):
                     sum = sum + float(table.item(rows, 2).text())
 
-                    print(name_list)
+                print(name_list)
 
                 self.label_14.setText("СУММА: " + str(sum))
             case 5:
