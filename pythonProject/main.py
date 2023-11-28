@@ -724,8 +724,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     recipe_cost_list[row[1]].append(float(row[2]))
 
                 table.clearContents()
-                table.setRowCount(len(self.verticalLayout_6))
+
+                name_l = defaultdict(list)
+                for name in range(self.verticalLayout_6.count()):
+                    # print(name)
+                    # self.verticalLayout_11.itemAt(row).widget().value()
+                    name_l[0].append(self.verticalLayout_6.itemAt(name).widget().currentText())
+                # print(name_l)
+                name_l[0] = set(name_l[0])
+                # print(name_l)
+
+                # print( f'размер таблицы {len(name_l)}')
+                table.setRowCount(len(name_l[0]))
                 rows = len(self.verticalLayout_6)
+
+                # print(name_l[0])
+                name_list = []
+                for id in name_l[0]:
+                    name_list.append(id)
+                print(name_list)
+                print(name_list[0])
+
+                for row_in_table in range(table.rowCount()):
+                    print("строка в таблице ")
+                    print(row_in_table)
+                    # print(name_l[row_in_table])
+                    table.setItem(row_in_table, 0, QTableWidgetItem(name_list[row_in_table]))
+                    table.setItem(row_in_table, 1, QTableWidgetItem(str(0)))
 
                 #########################################################################
                 # РАБОТАЕТ !!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -736,43 +761,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 name_list = []
                 for row in range(rows):
                     name_production = self.verticalLayout_6.itemAt(row).widget().currentText()
-                    # print(name_list)
-                    if name_production in name_list:
-                        # print("1")
-                        for row_in_table in range(table.rowCount()):
-                            # print("тут запись")
-                            # print(row_in_table)
-                            if table.item(row_in_table, 0).text() == name_production:
-                                print("1")
-                            #     table.itemAt(row_in_table, 1).
-                            #     float(self.tableWidget.item(row, 2).text())
-                                print(row_in_table)
-                                # print(float(table.item(0, 1).text()))
-                            #     print(table.itemAt(row_in_table, 1).text())
-                            #     print(self.verticalLayout_11.itemAt(row).widget().value() + float(table.itemAt(row_in_table, 1).text()))
-                            #     gram = self.verticalLayout_11.itemAt(row).widget().value() + float(table.item(row_in_table, 1).text())
-                            #     # print("2")
-                            # #     # table.setItem(row, 0, QTableWidgetItem(name_production))
-                            # #     table.editItem()
-                            #     table.itemAt(row_in_table, 1).setText(str(gram))
-                            #     # table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
-                            # if name_production in recipe_cost_list:
-                            #     cost = recipe_cost_list[name_production]
-                            #     value = (gram * cost[0]) / 100
-                            #     # table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
-                            #     table.itemAt(row_in_table, 2).setText(str(value))
-                            #     sum = sum + value
-                            # print("2")
-                    else:
-                        name_list.append(name_production)
-                        gram = self.verticalLayout_11.itemAt(row).widget().value()
-                        table.setItem(row, 0, QTableWidgetItem(name_production))
-                        table.setItem(row, 1, QTableWidgetItem(str(gram)))
+                    # # print(name_list)
+                    # if name_production in name_list:
+                    #     # print("1")
+                    for row_in_table in range(table.rowCount()):
+                        # print("тут запись")
+                        # print(row_in_table)
+                        if table.item(row_in_table, 0).text() == name_production:
+                            gram = self.verticalLayout_11.itemAt(row).widget().value() + float(table.item(row_in_table, 1).text())
+                            table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
                         if name_production in recipe_cost_list:
                             cost = recipe_cost_list[name_production]
                             value = (gram * cost[0]) / 100
-                            table.setItem(row, 2, QTableWidgetItem(str(value)))
-                            sum = sum + value
+                            table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
+                                # table.itemAt(row_in_table, 2).setText(str(value))
+                            # sum = sum + gram
+                            # print("2")
+                    # else:
+                    #     gram = self.verticalLayout_11.itemAt(row).widget().value()
+                    #     table.setItem(row_in_table, 0, QTableWidgetItem(name_production))
+                    #     table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
+                    #     if name_production in recipe_cost_list:
+                    #         cost = recipe_cost_list[name_production]
+                    #         value = (gram * cost[0]) / 100
+                    #         table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
+                    #         # sum = sum + value
+
+                for rows in range(table.rowCount()):
+                    sum = sum + float(table.item(rows, 2).text())
 
                     print(name_list)
 
