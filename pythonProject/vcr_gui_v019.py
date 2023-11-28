@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v017.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v019.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -15,7 +15,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        # MainWindow.resize(1300, 700)
+        # MainWindow.resize(1345, 888)
         MainWindow.setMinimumSize(QtCore.QSize(1300, 700))
         MainWindow.setStyleSheet("gridline-color: rgb(177, 255, 170);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollArea_3.setObjectName("scrollArea_3")
         self.scrollAreaWidgetContents_7 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 677, 430))
+        self.scrollAreaWidgetContents_7.setGeometry(QtCore.QRect(0, 0, 677, 527))
         self.scrollAreaWidgetContents_7.setObjectName("scrollAreaWidgetContents_7")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents_7)
         self.gridLayout.setObjectName("gridLayout")
@@ -551,7 +551,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_6 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 577, 85))
+        self.scrollAreaWidgetContents_6.setGeometry(QtCore.QRect(0, 0, 577, 136))
         self.scrollAreaWidgetContents_6.setObjectName("scrollAreaWidgetContents_6")
         self.verticalLayout_20 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_6)
         self.verticalLayout_20.setObjectName("verticalLayout_20")
@@ -611,6 +611,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.textEdit_2)
         self.verticalLayout_15.addLayout(self.horizontalLayout_8)
         self.calendarWidget = QtWidgets.QCalendarWidget(self.page_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.calendarWidget.sizePolicy().hasHeightForWidth())
+        self.calendarWidget.setSizePolicy(sizePolicy)
+        self.calendarWidget.setMinimumSize(QtCore.QSize(400, 240))
         self.calendarWidget.setMaximumSize(QtCore.QSize(300, 300))
         self.calendarWidget.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "color: rgb(43, 89, 250);")
@@ -643,6 +649,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.addWidget(self.textEdit_3)
         self.verticalLayout_12.addLayout(self.horizontalLayout_11)
         self.calendarWidget_2 = QtWidgets.QCalendarWidget(self.page_6)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.calendarWidget_2.sizePolicy().hasHeightForWidth())
+        self.calendarWidget_2.setSizePolicy(sizePolicy)
+        self.calendarWidget_2.setMinimumSize(QtCore.QSize(400, 240))
         self.calendarWidget_2.setMaximumSize(QtCore.QSize(300, 300))
         self.calendarWidget_2.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "color: rgb(43, 89, 250);")
@@ -767,6 +779,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_19.addWidget(self.textEdit_4)
         self.verticalLayout_16.addLayout(self.horizontalLayout_19)
         self.calendarWidget_5 = QtWidgets.QCalendarWidget(self.page)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.calendarWidget_5.sizePolicy().hasHeightForWidth())
+        self.calendarWidget_5.setSizePolicy(sizePolicy)
+        self.calendarWidget_5.setMinimumSize(QtCore.QSize(400, 240))
         self.calendarWidget_5.setMaximumSize(QtCore.QSize(300, 300))
         self.calendarWidget_5.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "color: rgb(43, 89, 250);")
@@ -799,6 +817,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_20.addWidget(self.textEdit_5)
         self.verticalLayout_18.addLayout(self.horizontalLayout_20)
         self.calendarWidget_6 = QtWidgets.QCalendarWidget(self.page)
+        self.calendarWidget_6.setMinimumSize(QtCore.QSize(400, 240))
         self.calendarWidget_6.setMaximumSize(QtCore.QSize(300, 300))
         self.calendarWidget_6.setStyleSheet("background-color: rgb(255, 255, 255);\n"
 "color: rgb(43, 89, 250);")
@@ -1146,6 +1165,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.stackedWidget)
         self.verticalLayout_29.addLayout(self.verticalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.statusBar = QtWidgets.QStatusBar(MainWindow)
+        self.statusBar.setObjectName("statusBar")
+        MainWindow.setStatusBar(self.statusBar)
 
         self.retranslateUi(MainWindow)
         self.stackedWidget.setCurrentIndex(0)

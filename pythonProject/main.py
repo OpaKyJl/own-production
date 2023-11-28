@@ -9,7 +9,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v017 import Ui_MainWindow
+from vcr_gui_v019 import Ui_MainWindow
 import server as srv
 
 from MplForWidget import MyMplCanvas
@@ -362,8 +362,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # return fig
 
         # получаем данные и строим по тим график
-        fig = plt.figure()
-        # fig, axes = plt.subplots()
+        # fig = plt.figure()
+        fig, ax = plt.subplots()
 
         # axes.plot()
         date_list = []
@@ -382,6 +382,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(data_list)
 
         df = pd.DataFrame()
+
+        # название продукта по id
+        select_data_from_table = srv.select_from_table(connection, db_products)
+        product_name = defaultdict(list)
+
+        for row in select_data_from_table:
+            product_name[row[0]].append(row[1])
 
         for value in data_list:
             print(value)
@@ -417,7 +424,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             print(gram_list)
 
             # mplc.cursor(hover=True)
-            plt.plot(date_list, gram_list)
+            ax.plot(date_list, gram_list, label=product_name[value][0])
+            ax.legend( loc='upper left', prop={'size': 10})
+
+            # plt.plot(date_list, gram_list)
+
+
             # ax = plt.plot(date_list, gram_list)
             # ax.set_xlabel('Дата')
             # ax.set_ylabel('Средний объём продаж')
