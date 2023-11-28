@@ -693,11 +693,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         production_id[row[1]].append(row[0])
                     ##########################################################################
                     layout = self.verticalLayout_19
+
                     # соотносим имена продукции с id
                     for row in range(layout.count()):
                         for name in production_id:
                             if name == layout.itemAt(row).widget().currentText():
                                 data_for_an["продукция"].append([name, production_id[name][0]])
+
+                    name_list = defaultdict(list)
+                    for info in data_for_an["продукция"]:
+                        # print(info[0])
+                        if info[0] in name_list[0]:
+                            # data_for_an["продукция"].remove(info)
+                            # data_for_an["продукция"].pop(info)
+                            a = 5
+                        else:
+                            name_list[0].append(info[0])
+
+                    print(name_list)
+
+                    print("начинаем тут ----------------------")
+                    for id in range(len(name_list[0])):
+                        # print(info[0])
+                        first = True
+                        index_del_list = defaultdict(list)
+                        for info in range(len(data_for_an["продукция"])):
+                            print(data_for_an["продукция"][info])
+                            # print(name_list[0][id])
+                            if data_for_an["продукция"][info][0] == name_list[0][id] and first:
+                                # data_for_an["продукция"].remove(info)
+                                first = False
+                            elif data_for_an["продукция"][info][0] == name_list[0][id]:
+                                # data_for_an["продукция"].remove(info)
+                                # data_for_an["продукция"].pop(info)
+                                print(info)
+                                index_del_list[0].append(info)
+                        print("----------индексы на удаление----------")
+                        index_del_list[0].reverse()
+
+                        for info in range(len(index_del_list[0])):
+                            data_for_an["продукция"].pop(index_del_list[0][info])
+                        # print(index_del_list[0])
+                    print(data_for_an)
+                    print("--------------------------")
+                    # print(data_for_an["продукция"])
+                    # data_for_an["продукция"] = set(data_for_an["продукция"])
+                    # print(data_for_an["продукция"])
+                    # print("--------------------------")
 
                     # теперь выбрать данные по дате
                     select_data_from_table = srv.select_from_table(connection, db_name)
@@ -707,7 +749,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             if (row[1] == data_for_an["продукция"][id][1]) and ((row[2] >= date[0]) and (row[2] <= date[1])):
                                 data[row[1]].append([row[2], row[3], row[4]])
 
-                    print(data)
+                    # print("дата до")
+                    # print(data)
+                    # for name in production_id:
+                    #     print(production_id[name[0]])
+                    #     # new = [dict(s) for s in set(frozenset(d.items()) for d in surv)]
+                    #
+                    #     print("============")
+                    # print("дата после")
+                    # print(data)
 
                     # осталось построить графики по выбранной информации
                     self.prepare_canvas_and_toolbar(data, db_name, 2)
