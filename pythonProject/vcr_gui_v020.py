@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v019.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v020.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -466,6 +466,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(-1, 25, -1, -1)
+        self.horizontalLayout_4.setSpacing(100)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.pBtn_an_sales_product = QtWidgets.QPushButton(self.page_5)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
@@ -473,7 +474,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pBtn_an_sales_product.sizePolicy().hasHeightForWidth())
         self.pBtn_an_sales_product.setSizePolicy(sizePolicy)
-        self.pBtn_an_sales_product.setMinimumSize(QtCore.QSize(550, 800))
+        self.pBtn_an_sales_product.setMinimumSize(QtCore.QSize(300, 600))
         self.pBtn_an_sales_product.setMaximumSize(QtCore.QSize(550, 800))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -494,7 +495,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pBtn_an_sales_production.sizePolicy().hasHeightForWidth())
         self.pBtn_an_sales_production.setSizePolicy(sizePolicy)
-        self.pBtn_an_sales_production.setMinimumSize(QtCore.QSize(550, 800))
+        self.pBtn_an_sales_production.setMinimumSize(QtCore.QSize(300, 600))
         self.pBtn_an_sales_production.setMaximumSize(QtCore.QSize(550, 800))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")

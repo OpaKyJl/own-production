@@ -9,7 +9,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v019 import Ui_MainWindow
+from vcr_gui_v020 import Ui_MainWindow
 import server as srv
 
 from MplForWidget import MyMplCanvas
@@ -58,8 +58,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pBtn_an_sales_product.setStyleSheet(pBtn_style_sheet)
         self.pBtn_an_sales_production.setStyleSheet(pBtn_style_sheet)
 
+        # продукты
         data = defaultdict(list)
-        self.canvas = MyMplCanvas(self.get_graphic(data))
+        self.canvas = MyMplCanvas(self.get_graphic(data, db_products_accounting))
         self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
 
         # сначала добавляем тулбар
@@ -67,6 +68,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.companovka_for_mpl.addWidget(self.toolbar)
 
         self.companovka_for_mpl.addWidget(self.canvas)
+
+        # продукция (не работает совместно)  может добавить_2
+        data_2 = defaultdict(list)
+        self.canvas_2 = MyMplCanvas(self.get_graphic(data_2, db_sales_accounting))
+        self.companovka_for_mpl_2 = QtWidgets.QVBoxLayout(self.widget)
+
+        # сначала добавляем тулбар
+        self.toolbar_2 = NavigationToolbar(self.canvas_2, self)
+        self.companovka_for_mpl_2.addWidget(self.toolbar_2)
+
+        self.companovka_for_mpl_2.addWidget(self.canvas_2)
 
         self.add_functions()
         self.btn_navigation()
@@ -107,6 +119,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.checkBox_2.stateChanged.connect(self.get_all_products)
 
+    def set_status_bar(self, msg):
+        match msg:
+            case "сохранить":
+                self.statusBar.showMessage("Данные сохранены")
+                self.statusBar.setStyleSheet("background-color: #00FF7F")
+
+            case "анализ":
+                self.statusBar.showMessage("Данные предоставлены для анализа")
+                self.statusBar.setStyleSheet("background-color: #00FF7F")
     def get_all_products(self):
         layout = self.verticalLayout_43
         products_from_table = srv.select_from_table(connection, db_products)
@@ -333,6 +354,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # записываем в БД
                 srv.insert_into_table(connection, db_name, insert_data)
 
+                self.set_status_bar("сохранить")
+
             case "sales_accounting":
                 print("тут insert to " + db_name)
                 insert_data = defaultdict(list)
@@ -356,105 +379,192 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     insert_data[3].append(float(self.tableWidget.item(row, 2).text()))
 
                 srv.insert_into_table(connection, db_name, insert_data)
+                self.set_status_bar("сохранить")
 
-    def get_graphic(self, data):
-        # fig = plot_graphics(file_path, "M01AB")
-        # return fig
+    def get_graphic(self, data, db_name):
+        match db_name:
+            case "products_accounting":
+                # fig = plot_graphics(file_path, "M01AB")
+                # return fig
 
-        # получаем данные и строим по тим график
-        # fig = plt.figure()
-        fig, ax = plt.subplots()
+                # получаем данные и строим по тим график
+                # fig = plt.figure()
+                fig, ax = plt.subplots()
 
-        # axes.plot()
-        date_list = []
-        # gram_list = []
-        data_list = defaultdict(list)
+                # axes.plot()
+                date_list = []
+                # gram_list = []
+                data_list = defaultdict(list)
 
-        for row in data:
-            # выбираем продукцию
-            for id in data[row]:
-                data_list[id[0]].append([[id[1].strftime('%Y-%m-%d')], [float(id[2])]])
-            print("---------------")
+                for row in data:
+                    # выбираем продукцию
+                    for id in data[row]:
+                        data_list[id[0]].append([[id[1].strftime('%Y-%m-%d')], [float(id[2])]])
+                    print("---------------")
 
-        x = ["2023-11-26 00:00:00", "2023-11-27 00:00:00"]
-        y = [5.00, 5.00]
+                x = ["2023-11-26 00:00:00", "2023-11-27 00:00:00"]
+                y = [5.00, 5.00]
 
-        print(data_list)
+                print(data_list)
 
-        df = pd.DataFrame()
+                df = pd.DataFrame()
 
-        # название продукта по id
-        select_data_from_table = srv.select_from_table(connection, db_products)
-        product_name = defaultdict(list)
+                # название продукта по id
+                select_data_from_table = srv.select_from_table(connection, db_products)
+                product_name = defaultdict(list)
 
-        for row in select_data_from_table:
-            product_name[row[0]].append(row[1])
+                for row in select_data_from_table:
+                    product_name[row[0]].append(row[1])
 
-        for value in data_list:
-            print(value)
-            date_list = []
-            gram_list = []
-            date_gram_list = defaultdict(list)
-            for row in data_list[value]:
-                # print(row[0][0], row[1][0])
-                # print("Проверка" + row[0][0])
-                # print(date_list)
-                if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() in date_list:
-                    # print("уже есть")
-                    for date in date_list:
-                        # print(row[0][0] + "=" + date)
-                        if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
-                            # print("тут схоже")
-                            # print(date_gram_list[date])
-                            date_gram_list[date][0] += row[1][0]
-                else:
-                    d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
-                    date_list.append(d)
-                    gram_list.append(row[1][0])
-                    date_gram_list[d].append(row[1][0])
-            date_list.sort()
+                for value in data_list:
+                    print(value)
+                    date_list = []
+                    gram_list = []
+                    date_gram_list = defaultdict(list)
+                    for row in data_list[value]:
+                        # print(row[0][0], row[1][0])
+                        # print("Проверка" + row[0][0])
+                        # print(date_list)
+                        if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() in date_list:
+                            # print("уже есть")
+                            for date in date_list:
+                                # print(row[0][0] + "=" + date)
+                                if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
+                                    # print("тут схоже")
+                                    # print(date_gram_list[date])
+                                    date_gram_list[date][0] += row[1][0]
+                        else:
+                            d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
+                            date_list.append(d)
+                            gram_list.append(row[1][0])
+                            date_gram_list[d].append(row[1][0])
+                    date_list.sort()
 
-            # print(date_list)
-            # print(date_gram_list)
+                    # print(date_list)
+                    # print(date_gram_list)
 
-            for id in range(len(date_list)):
-                # print(id)
-                gram_list[id] = date_gram_list[date_list[id]][0]
-            print(date_list)
-            print(gram_list)
+                    for id in range(len(date_list)):
+                        # print(id)
+                        gram_list[id] = date_gram_list[date_list[id]][0]
+                    print(date_list)
+                    print(gram_list)
 
-            # mplc.cursor(hover=True)
-            ax.plot(date_list, gram_list, label=product_name[value][0])
-            ax.legend( loc='upper left', prop={'size': 10})
+                    # mplc.cursor(hover=True)
+                    ax.plot(date_list, gram_list, label=product_name[value][0])
+                    ax.legend( loc='upper left', prop={'size': 10})
+                    ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
 
-            # plt.plot(date_list, gram_list)
+                    # plt.plot(date_list, gram_list)
 
 
-            # ax = plt.plot(date_list, gram_list)
-            # ax.set_xlabel('Дата')
-            # ax.set_ylabel('Средний объём продаж')
-            #
-            # plt.grid(which='major')
-            # plt.grid(which='minor')
-            print("----")
+                    # ax = plt.plot(date_list, gram_list)
+                    # ax.set_xlabel('Дата')
+                    # ax.set_ylabel('Средний объём продаж')
+                    #
+                    # plt.grid(which='major')
+                    # plt.grid(which='minor')
+                    print("----")
 
-        # plt.show()
-        print("конец построения графиков")
+                # plt.show()
+                plt.grid(which='major')
+                plt.grid(which='minor')
+                print("конец построения графиков для продуктов")
 
-        # axes.plot()
-        return fig
+                # self.statusBar.showMessage("График построен")
+                # self.statusBar.setStyleSheet("background-color: yellow")
 
-    def prepare_canvas_and_toolbar(self, data):
-        self.companovka_for_mpl.removeWidget(self.canvas)
-        self.canvas.hide()
-        self.canvas = MyMplCanvas(self.get_graphic(data))
+                # axes.plot()
+                return fig
+            case "sales_accounting":
+                print("тут анализ для продукции")
 
-        #сначала добавляем тулбар
-        self.toolbar.hide()
-        self.toolbar = NavigationToolbar(self.canvas, self)
-        self.companovka_for_mpl.addWidget(self.toolbar)
+                fig, ax = plt.subplots()
+                date_list = []
 
-        self.companovka_for_mpl.addWidget(self.canvas)
+                data_list = defaultdict(list)
+
+                print(data)
+                for row in data:
+                    # выбираем продукцию
+                    # print(row)
+                    for id in data[row]:
+                        # print(id)
+                        data_list[row].append([[id[0].strftime('%Y-%m-%d')], [float(id[1])]])
+                    print("---------------")
+
+                print(data_list)
+
+                # название продукции по id
+                select_data_from_table = srv.select_from_table(connection, db_recipe_cost)
+                production_name = defaultdict(list)
+
+                for row in select_data_from_table:
+                    production_name[row[0]].append(row[1])
+
+                for value in data_list:
+                    print(value)
+                    date_list = []
+                    gram_list = []
+                    date_gram_list = defaultdict(list)
+                    for row in data_list[value]:
+                        if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() in date_list:
+                            for date in date_list:
+                                if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
+                                    date_gram_list[date][0] += row[1][0]
+                        else:
+                            d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
+                            date_list.append(d)
+                            gram_list.append(row[1][0])
+                            date_gram_list[d].append(row[1][0])
+                    date_list.sort()
+
+                    # print(date_list)
+
+                    for id in range(len(date_list)):
+                        # print(id)
+                        gram_list[id] = date_gram_list[date_list[id]][0]
+                    print(date_list)
+                    print(gram_list)
+
+                    # mplc.cursor(hover=True)
+                    # print(production_name[value][0])
+
+                    ax.plot(date_list, gram_list, label=production_name[value][0])
+                    ax.legend(loc='upper left', prop={'size': 10})
+                    ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
+
+                    print("----")
+
+                plt.grid(which='major')
+                plt.grid(which='minor')
+                print("конец построения графиков для продукции")
+                return fig
+
+
+    def prepare_canvas_and_toolbar(self, data, db_name, n):
+        match n:
+            case 1:
+                self.companovka_for_mpl.removeWidget(self.canvas)
+                self.canvas.hide()
+                self.canvas = MyMplCanvas(self.get_graphic(data, db_name))
+
+                #сначала добавляем тулбар
+                self.toolbar.hide()
+                self.toolbar = NavigationToolbar(self.canvas, self)
+                self.companovka_for_mpl.addWidget(self.toolbar)
+
+                self.companovka_for_mpl.addWidget(self.canvas)
+            case 2:
+                self.companovka_for_mpl_2.removeWidget(self.canvas_2)
+                self.canvas_2.hide()
+                self.canvas_2 = MyMplCanvas(self.get_graphic(data, db_name))
+
+                # сначала добавляем тулбар
+                self.toolbar_2.hide()
+                self.toolbar_2 = NavigationToolbar(self.canvas_2, self)
+                self.companovka_for_mpl_2.addWidget(self.toolbar_2)
+
+                self.companovka_for_mpl_2.addWidget(self.canvas_2)
 
     def get_graphics(self, db_name):
         match db_name:
@@ -535,47 +645,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # print(data)
 
                 # осталось построить графики по выбранной информации
-
-                ########################################################################################
-
                 # рисуем наш плот
-
-                # if self.companovka_for_mpl is not None:
-                #     self.companovka_for_mpl.removeWidget(self.canvas)
-                #     self.canvas.hide()
-                # self.canvas = MyMplCanvas(self.get_graphic(data))
-                # self.companovka_for_mpl = QtWidgets.QVBoxLayout(self.widget_2)
-                # self.companovka_for_mpl.addWidget(self.canvas)
-                #
-                # # self.toolbar.hide()
-                # self.toolbar = NavigationToolbar(self.canvas, self)
-                # self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
-                self.prepare_canvas_and_toolbar(data)
-                # fig = self.get_graphic(data)
-
-                # self.companovka_for_mpl.removeWidget(self.canvas)
-                # self.canvas.hide()
-                # self.canvas = MyMplCanvas(self.get_graphic(data))
-                # self.companovka_for_mpl.addWidget(self.canvas)
-                #
-                # self.toolbar.hide()
-
-                #///////////////////////////////////////////////////////////////////////////////////
-
-                # self.companovka_for_mpl.removeWidget(self.canvas)
-                # self.canvas.hide()
-                # self.canvas = MyMplCanvas(self.get_graphic())
-                # self.companovka_for_mpl.addWidget(self.canvas)
-                #
-                # self.toolbar.hide()
-                # self.toolbar = NavigationToolbar(self.canvas, self)
-                # self.addToolBar(Qt.Qt.TopToolBarArea, self.toolbar)
-                #
-                # self.comboBox_2.setStyleSheet("color: rgb(0, 85, 255);\n"
-                #                               "selection-color: rgb(0, 85, 255);\n"
-                #                               "selection-background-color: rgb(170, 255, 255);")
-
-                ########################################################################################
+                self.prepare_canvas_and_toolbar(data, db_name, 1)
+                self.set_status_bar("анализ")
 
             case "sales_accounting":
                 print("тут данные из таблицы " + db_name)
@@ -612,6 +684,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 print(data)
 
                 # осталось построить графики по выбранной информации
+                self.prepare_canvas_and_toolbar(data, db_name, 2)
 
     def add_tablerow(self, table, db_name, page):
         match page:
@@ -742,9 +815,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.pBtn_back_to_main_7.clicked.connect(lambda: self.reload())
         self.pBtn_back_to_main_7.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
-        # self.prepare_canvas_and_toolbar(data)
-        # data = defaultdict(list)
-        # self.pBtn_back_to_main_7.clicked.connect(lambda: self.prepare_canvas_and_toolbar(data))
+
 
         #################################################################################################
 
