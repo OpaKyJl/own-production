@@ -18,6 +18,7 @@ from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationTo
 import matplotlib.pyplot as plt
 import pandas as pd
 import mplcursors as mplc
+import pylab
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
@@ -411,6 +412,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # fig = plt.figure()
                 fig, ax = plt.subplots()
 
+                # построилось 2 на 3 графиков
+                # fig, axs = plt.subplots(nrows=1, ncols=1)
+
                 # axes.plot()
                 date_list = []
                 # gram_list = []
@@ -435,6 +439,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 for row in select_data_from_table:
                     product_name[row[0]].append(row[1])
+
+                print("туту len==============")
+                print(len(data_list))
+                # if len(data) !=0:
+                #     fig, axs = plt.subplots(len(data))
+                # else:
+                #     fig, axs = plt.subplots(1)
+                # fig, (axes1, axes2) = plt.subplots(2)
+                # fig, ax = plt.subplots(1, 1)
+                # if len(data_list) != 0:
+                #     fig, axs = plt.subplots(nrows=1, ncols=len(data_list))
+                # else:
+                #     fig, axs = plt.subplots(nrows=1, ncols=1)
+
 
                 for value in data_list:
                     print(value)
@@ -470,30 +488,74 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print(gram_list)
 
                     # mplc.cursor(hover=True)
+                    print("тут value:---------------------")
+                    # value - это индекс
+                    # тут нужен индексу записи, где ключ '4'
+                    # [i for i,x in enumerate(testlist) if x == 1]
+                    # column = [i for i,x in enumerate(data_list) if x == value]
+
+                    # column = -3
+                    # print("тут индексы---------")
+                    # for i in (i for i, x in enumerate(data_list) if x == value):
+                    #     print(i)
+                    #     column = i
+
                     ax.plot(date_list, gram_list, label=product_name[value][0])
                     ax.legend( loc='upper left', prop={'size': 10})
                     ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
 
-                    # plt.plot(date_list, gram_list)
+                    ax.set_ylabel("Произведено")
+                    ax.set_xlabel("Дата")
 
+                    # тут ошибка
 
-                    # ax = plt.plot(date_list, gram_list)
-                    # ax.set_xlabel('Дата')
-                    # ax.set_ylabel('Средний объём продаж')
-                    #
-                    # plt.grid(which='major')
-                    # plt.grid(which='minor')
+                    # ax[0, 0].plot([1, 2], [4, 8])
+                    # ax[0, 0].plot(date_list, gram_list, label=product_name[value][0])
+                    # fig, axs = plt.subplots()
+                    # axes1.plot(date_list, gram_list)
+                    # print("дошли?")
+                    # axs[0, 0].legend(loc='upper left', prop={'size': 10})
+                    # axs[0, 0].scatter(date_list, gram_list, color='green', s=40, marker='o')
+
                     print("----")
 
-                # plt.show()
                 plt.grid(which='major')
                 plt.grid(which='minor')
+
+                    # # Две строки, два столбца. Текущая ячейка - 1
+                    # pylab.subplot(2, 2, 1)
+                    # pylab.plot(date_list, gram_list, alpha=0.8)
+                    # pylab.title("Линейный график")
+
+                ##############################################################
+                # работает
+                # plt.subplot(121)
+                # plt.title("title")
+                # plt.xlabel("xlabel")
+                # plt.ylabel("ylabel")
+                # plt.text(0.2, 0.2, "text")
+                # plt.annotate("annotate", xy=(0.2, 0.4), xytext=(0.6, 0.7),
+                #              arrowprops=dict(facecolor='black', shrink=0.05))
+                # plt.subplot(122)
+                # plt.title("title")
+                # plt.xlabel("xlabel")
+                # plt.ylabel("ylabel")
+                # plt.text(0.5, 0.5, "text")
+                ##############################################################
+                # plt.show()
+                # plt.grid(which='major')
+                # plt.grid(which='minor')
                 print("конец построения графиков для продуктов")
+
+
+                # pylab.show()
 
                 # self.statusBar.showMessage("График построен")
                 # self.statusBar.setStyleSheet("background-color: yellow")
 
-                # axes.plot()
+                # ax_test.plot()
+                # plt.show()
+
                 return fig
             case "sales_accounting":
                 print("тут анализ для продукции")
@@ -552,6 +614,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ax.plot(date_list, gram_list, label=production_name[value][0])
                     ax.legend(loc='upper left', prop={'size': 10})
                     ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
+
+                    ax.set_ylabel("Произведено")
+                    ax.set_xlabel("Дата")
 
                     print("----")
 
