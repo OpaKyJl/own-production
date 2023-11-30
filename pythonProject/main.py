@@ -10,7 +10,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v021 import Ui_MainWindow
+from vcr_gui_v022 import Ui_MainWindow
 import server as srv
 
 from MplForWidget import MyMplCanvas
@@ -410,7 +410,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 # получаем данные и строим по тим график
                 # fig = plt.figure()
-                fig, ax = plt.subplots()
+                # fig, ax = plt.subplots()
+                fig, (axes1, axes2) = plt.subplots(2)
 
                 # построилось 2 на 3 графиков
                 # fig, axs = plt.subplots(nrows=1, ncols=1)
@@ -420,10 +421,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # gram_list = []
                 data_list = defaultdict(list)
 
+                # print(data)
                 for row in data:
                     # выбираем продукцию
                     for id in data[row]:
-                        data_list[id[0]].append([[id[1].strftime('%Y-%m-%d')], [float(id[2])]])
+                        data_list[id[0]].append([[id[1].strftime('%Y-%m-%d')], [float(id[2])], [float(id[3])]])
                     print("---------------")
 
                 x = ["2023-11-26 00:00:00", "2023-11-27 00:00:00"]
@@ -458,7 +460,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print(value)
                     date_list = []
                     gram_list = []
+                    price_list = []
                     date_gram_list = defaultdict(list)
+                    date_price_list = defaultdict(list)
                     for row in data_list[value]:
                         # print(row[0][0], row[1][0])
                         # print("Проверка" + row[0][0])
@@ -470,12 +474,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
                                     # print("тут схоже")
                                     # print(date_gram_list[date])
+                                    date_price_list[date][0] += row[2][0]
                                     date_gram_list[date][0] += row[1][0]
                         else:
                             d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
                             date_list.append(d)
                             gram_list.append(row[1][0])
+                            price_list.append(row[2][0])
                             date_gram_list[d].append(row[1][0])
+                            date_price_list[d].append(row[2][0])
                     date_list.sort()
 
                     # print(date_list)
@@ -484,8 +491,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     for id in range(len(date_list)):
                         # print(id)
                         gram_list[id] = date_gram_list[date_list[id]][0]
+                        price_list[id] = date_price_list[date_list[id]][0]
                     print(date_list)
                     print(gram_list)
+                    print(price_list)
 
                     # mplc.cursor(hover=True)
                     print("тут value:---------------------")
@@ -500,12 +509,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     #     print(i)
                     #     column = i
 
-                    ax.plot(date_list, gram_list, label=product_name[value][0])
-                    ax.legend( loc='upper left', prop={'size': 10})
-                    ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
+                    axes1.plot(date_list, gram_list, label=product_name[value][0])
+                    axes1.legend( loc='upper left', prop={'size': 10})
+                    axes1.scatter(date_list, gram_list, color='green', s=40, marker='o')
 
-                    ax.set_ylabel("Произведено")
-                    ax.set_xlabel("Дата")
+                    axes1.set_ylabel("Использовано (в гр.)")
+                    # axes1.set_xlabel("Дата")
+
+                    # тут стоимость
+                    axes2.plot(date_list, price_list, label=product_name[value][0])
+                    axes2.legend(loc='upper left', prop={'size': 10})
+                    axes2.scatter(date_list, price_list, color='green', s=40, marker='o')
+
+                    axes2.set_ylabel("Затраты (в руб.)")
+                    # axes2.set_xlabel("Дата")
 
                     # тут ошибка
 
@@ -519,8 +536,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     print("----")
 
-                plt.grid(which='major')
-                plt.grid(which='minor')
+                axes1.grid(which='major')
+                axes1.grid(which='minor')
+
+                axes2.grid(which='major')
+                axes2.grid(which='minor')
 
                     # # Две строки, два столбца. Текущая ячейка - 1
                     # pylab.subplot(2, 2, 1)
@@ -560,7 +580,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             case "sales_accounting":
                 print("тут анализ для продукции")
 
-                fig, ax = plt.subplots()
+                # fig, ax = plt.subplots()
+
+                fig, (axes1, axes2) = plt.subplots(2)
+
                 date_list = []
 
                 data_list = defaultdict(list)
@@ -571,7 +594,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     # print(row)
                     for id in data[row]:
                         # print(id)
-                        data_list[row].append([[id[0].strftime('%Y-%m-%d')], [float(id[1])]])
+                        data_list[row].append([[id[0].strftime('%Y-%m-%d')], [float(id[1])], [float(id[2])]])
                     print("---------------")
 
                 print(data_list)
@@ -587,17 +610,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print(value)
                     date_list = []
                     gram_list = []
+                    price_list = []
                     date_gram_list = defaultdict(list)
+                    date_price_list = defaultdict(list)
                     for row in data_list[value]:
                         if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() in date_list:
                             for date in date_list:
                                 if datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date() == date:
                                     date_gram_list[date][0] += row[1][0]
+                                    date_price_list[date][0] += row[2][0]
                         else:
                             d = datetime.datetime.strptime(row[0][0], '%Y-%m-%d').date()
                             date_list.append(d)
                             gram_list.append(row[1][0])
+                            price_list.append(row[2][0])
                             date_gram_list[d].append(row[1][0])
+                            date_price_list[d].append(row[2][0])
                     date_list.sort()
 
                     # print(date_list)
@@ -605,23 +633,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     for id in range(len(date_list)):
                         # print(id)
                         gram_list[id] = date_gram_list[date_list[id]][0]
+                        price_list[id] = date_price_list[date_list[id]][0]
                     print(date_list)
                     print(gram_list)
 
                     # mplc.cursor(hover=True)
                     # print(production_name[value][0])
 
-                    ax.plot(date_list, gram_list, label=production_name[value][0])
-                    ax.legend(loc='upper left', prop={'size': 10})
-                    ax.scatter(date_list, gram_list, color='green', s=40, marker='o')
+                    axes1.plot(date_list, gram_list, label=production_name[value][0])
+                    axes1.legend(loc='upper left', prop={'size': 10})
+                    axes1.scatter(date_list, gram_list, color='green', s=40, marker='o')
 
-                    ax.set_ylabel("Произведено")
-                    ax.set_xlabel("Дата")
+                    axes1.set_ylabel("Произведено (в гр.)")
+                    # axes1.set_xlabel("Дата")
+
+                    # тут стоимость
+                    axes2.plot(date_list, price_list, label=production_name[value][0])
+                    axes2.legend(loc='upper left', prop={'size': 10})
+                    axes2.scatter(date_list, price_list, color='green', s=40, marker='o')
+
+                    axes2.set_ylabel("Продано на сумму (в руб.)")
 
                     print("----")
 
-                plt.grid(which='major')
-                plt.grid(which='minor')
+                axes1.grid(which='major')
+                axes1.grid(which='minor')
+
+                axes2.grid(which='major')
+                axes2.grid(which='minor')
+                    # plt.grid(which='major')
+                    # plt.grid(which='minor')
                 print("конец построения графиков для продукции")
                 return fig
 
@@ -934,6 +975,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             value = (gram_of_product * self.spinBox_3.value()) / 100
                             text_of_recipe = f'{text_of_recipe}{ceil(recipe_list[id][row][1])} гр.\n'
                             table.setItem(row, 1, QTableWidgetItem(str(ceil(value))) )
+                font = QtGui.QFont()
+                font.setFamily("Times New Roman")
+                font.setPointSize(15)
+
+                table.setFont(font)
+
                 self.textEdit.setText(text_of_recipe)
 
     def fill_combox(self, db_name, combox):
