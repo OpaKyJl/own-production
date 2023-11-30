@@ -7,7 +7,8 @@ import time
 from collections import defaultdict
 from math import ceil
 
-from PyQt5 import Qt, QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.Qt import *
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
 from vcr_gui_v023 import Ui_MainWindow
@@ -18,7 +19,7 @@ from matplotlib.backends.backend_qt5 import NavigationToolbar2QT as NavigationTo
 import matplotlib.pyplot as plt
 import pandas as pd
 import mplcursors as mplc
-import pylab
+
 
 # from Graphics import plot_graphics, data_read # тут логика графиков
 # from MplForWidget import MyMplCanvas
@@ -706,7 +707,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date[1] = self.calendarWidget_6.selectedDate()
 
                 if date[0] > date[1]:
-                    self.set_status_bar("дата")
+                    # self.set_status_bar("дата")
+                    QMessageBox.critical(self, "Ошибка!", "Выберите корректный интервал дат", QMessageBox.Ok)
                 else:
                     # if self.checkBox_2.checkState() == 2:
                     #     self.clear_layout(self.verticalLayout_43)
@@ -774,9 +776,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     # print(data)
 
                     # осталось построить графики по выбранной информации
-                    # рисуем наш плот
-                    self.prepare_canvas_and_toolbar(data, db_name, 1)
-                    self.set_status_bar("анализ")
+
+                    # print(data)
+                    if len(data_for_an["продукты"]) == 0:
+                        QMessageBox.warning(self, "Сообщение ", "Выберите продукты для анализа", QMessageBox.Ok)
+                    elif len(data) == 0:
+                        QMessageBox.warning(self, "Сообщение ", "На выбранную дату нет информации", QMessageBox.Ok)
+                    else:
+                        # рисуем наш плот
+                        self.prepare_canvas_and_toolbar(data, db_name, 1)
+                        self.set_status_bar("анализ")
 
             case "sales_accounting":
                 print("тут данные из таблицы " + db_name)
@@ -789,7 +798,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date[1] = self.calendarWidget_2.selectedDate()
 
                 if date[0] > date[1]:
-                    self.set_status_bar("дата")
+                    # self.set_status_bar("дата")
+                    QMessageBox.critical(self, "Ошибка!", "Выберите корректный интервал дат", QMessageBox.Ok)
                 else:
                     ##########################################################################
                     # код повторяется (можно в функцию)
@@ -865,10 +875,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     # print("дата после")
                     # print(data)
 
-                    # осталось построить графики по выбранной информации
-                    self.prepare_canvas_and_toolbar(data, db_name, 2)
+                    # print(data)
+                    if len(data) == 0:
+                        QMessageBox.warning(self, "Сообщение ", "На выбранную дату нет информации", QMessageBox.Ok)
+                    else:
+                        # осталось построить графики по выбранной информации
+                        self.prepare_canvas_and_toolbar(data, db_name, 2)
 
-                    self.set_status_bar("анализ")
+                        self.set_status_bar("анализ")
+
 
     def add_tablerow(self, table, db_name, page):
         match page:
@@ -905,11 +920,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print("строка в таблице ")
                     print(row_in_table)
                     # print(name_l[row_in_table])
-                    table.setItem(row_in_table, 0, QTableWidgetItem(name_list[row_in_table]))
+                    table.setColumnWidth(0, 400)
+                    table.setColumnWidth(1, 130)
+                    table.setColumnWidth(2, 130)
+                    # table.currentItem().setTextAlignment()
 
-                    table.itemAt(row_in_table, 0).setTextAlignment(Qt.AlignHRight)
+                    # item = QTableWidgetItem(str(v))
+                    # item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter)
+                    # self.db_table.setItem(inx, i, item)
 
-                    table.setItem(row_in_table, 1, QTableWidgetItem(str(0)))
+                    # item = QTableWidgetItem(name_list[row_in_table]).setTextAlignment(Qt.Qt.AlignRight)
+
+                    # print(table.currentItem().textAlignment())
+
+                    # работает !!!!!!
+                    # item = QTableWidgetItem(name_list[row_in_table])  # create the item
+                    # item.setTextAlignment(Qt.AlignRight)  # change the alignment
+
+                    table.setItem(row_in_table, 0, QTableWidgetItem(name_list[row_in_table])) #.setTextAlignment(Qt.Alignment | Qt.AlignHCenter)) #(Qt.AlignRight | Qt.AlignVCenter))
+
+                    # table.itemAt(row_in_table, 0).setTextAlignment(Qt.AlignHRight)
+
+                    item = QTableWidgetItem(str(0)) # create the item
+                    item.setTextAlignment(Qt.AlignRight)  # change the alignment
+
+                    table.setItem(row_in_table, 1, item)
 
                 #########################################################################
                 # РАБОТАЕТ !!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -923,13 +958,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                      for row_in_table in range(table.rowCount()):
                          if table.item(row_in_table, 0).text() == name_production:
                             gram = self.verticalLayout_11.itemAt(row).widget().value() + float(table.item(row_in_table, 1).text())
-                            table.setItem(row_in_table, 1, QTableWidgetItem(str(gram)))
+
+                            item = QTableWidgetItem(str(gram))  # create the item
+                            item.setTextAlignment(Qt.AlignRight)  # change the alignment
+                            table.setItem(row_in_table, 1, item)
+
                             if name_production in recipe_cost_list:
                                 print(name_production)
                                 cost = recipe_cost_list[name_production]
                                 print(cost[0])
                                 value = (gram * cost[0]) / 100
-                                table.setItem(row_in_table, 2, QTableWidgetItem(str(value)))
+
+                                item = QTableWidgetItem(str(value)) # create the item
+                                item.setTextAlignment(Qt.AlignRight)  # change the alignment
+                                table.setItem(row_in_table, 2, item)
 
 
                 for rows in range(table.rowCount()):
@@ -973,13 +1015,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         text_of_recipe = f'{text_of_recipe}\n ------<{name}>------'
                         table.setRowCount(len(recipe_list[id]))
                         for row in range(len(recipe_list[id])):
+                            table.setColumnWidth(0, 400)
+                            table.setColumnWidth(1, 200)
+
                             product_name = str(product_list[recipe_list[id][row][0]][0][0])
                             table.setItem(row, 0, QTableWidgetItem(product_name))
                             text_of_recipe = f'{text_of_recipe} \n {product_name} - '
                             gram_of_product = recipe_list[id][row][1]
                             value = (gram_of_product * self.spinBox_3.value()) / 100
                             text_of_recipe = f'{text_of_recipe}{ceil(recipe_list[id][row][1])} гр.\n'
-                            table.setItem(row, 1, QTableWidgetItem(str(ceil(value))) )
+
+                            item = QTableWidgetItem(str(ceil(value))) # create the item
+                            item.setTextAlignment(Qt.AlignRight)  # change the alignment
+                            table.setItem(row, 1,  item)
                 font = QtGui.QFont()
                 font.setFamily("Times New Roman")
                 font.setPointSize(15)
