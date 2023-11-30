@@ -10,7 +10,7 @@ from math import ceil
 from PyQt5 import Qt, QtCore, QtGui, QtWidgets
 
 from PyQt5.QtWidgets import QMainWindow, QApplication, QTableWidgetItem
-from vcr_gui_v022 import Ui_MainWindow
+from vcr_gui_v023 import Ui_MainWindow
 import server as srv
 
 from MplForWidget import MyMplCanvas
@@ -906,6 +906,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     print(row_in_table)
                     # print(name_l[row_in_table])
                     table.setItem(row_in_table, 0, QTableWidgetItem(name_list[row_in_table]))
+
+                    table.itemAt(row_in_table, 0).setTextAlignment(Qt.AlignHRight)
+
                     table.setItem(row_in_table, 1, QTableWidgetItem(str(0)))
 
                 #########################################################################
@@ -931,6 +934,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 for rows in range(table.rowCount()):
                     sum = sum + float(table.item(rows, 2).text())
+
+
 
                 print(name_list)
 

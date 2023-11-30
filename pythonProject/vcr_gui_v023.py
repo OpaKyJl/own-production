@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'vcr_gui_v022.ui'
+# Form implementation generated from reading ui file 'vcr_gui_v023.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.10
 #
@@ -353,6 +353,7 @@ class Ui_MainWindow(object):
         font.setPointSize(15)
         self.tableWidget.setFont(font)
         self.tableWidget.setStyleSheet("color: rgb(43, 89, 250);")
+        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(2)
@@ -1096,6 +1097,7 @@ class Ui_MainWindow(object):
         self.tableWidget_2 = QtWidgets.QTableWidget(self.widget_4)
         self.tableWidget_2.setMaximumSize(QtCore.QSize(700, 16777215))
         self.tableWidget_2.setStyleSheet("color: rgb(43, 89, 250);")
+        self.tableWidget_2.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.tableWidget_2.setObjectName("tableWidget_2")
         self.tableWidget_2.setColumnCount(2)
         self.tableWidget_2.setRowCount(2)
